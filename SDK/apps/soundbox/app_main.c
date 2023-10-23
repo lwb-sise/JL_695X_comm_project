@@ -14,6 +14,7 @@
 #include "soundcard/peripheral.h"
 #include "audio.h"
 #include "vm.h"
+#include "user_head.h"
 
 
 #define LOG_TAG_CONST       APP
@@ -142,7 +143,7 @@ void app_main()
 #if (TCFG_USB_CDC_BACKGROUND_RUN && (!TCFG_PC_ENABLE))
     usb_cdc_background_run();
 #endif
-
+    // user_fun_init();
     app_task_loop();
 }
 

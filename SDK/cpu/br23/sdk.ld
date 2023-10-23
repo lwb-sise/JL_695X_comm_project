@@ -56,9 +56,9 @@ MIC_EFFECT_EQ_SECTION = 3;
 
 
 
-EQ_SECTION_NUM = 20 +MIC_EFFECT_EQ_SECTION;
 
 
+EQ_SECTION_NUM = 10+MIC_EFFECT_EQ_SECTION;
 
 
 MEMORY
@@ -96,6 +96,26 @@ MEMORY
 
 EXTERN(
 _start
+
+
+
+
+tws_local_media_sync
+tws_afh_sync
+tws_ci_data
+tws_acl_data_sync
+tws_event_sync
+tws_conn_sync
+tws_lmp_slot_sync
+tws_low_latency
+tws_media_sync
+tws_power_balance
+tws_sync_call
+tws_tx_sync
+tws_link_sync
+
+
+
 
 fat_vfs_ops
 
@@ -139,29 +159,7 @@ flac_decoder
 
 
 ape_decoder
-
-
-
-m4a_decoder
-
-
-
-
-
-
-alac_decoder
-
-
-
-amr_decoder
-
-
-
-dts_decoder
-
-
-
-g729_decoder
+wtgv2_decoder
 wav_decoder
 cvsd_encoder
 
@@ -243,6 +241,12 @@ SECTIONS
   *(.bt_aac_dec_core_sparse_code)
 
   *(.dts_dec_const)
+
+
+        *(.gpio_ram)
+        *(.LED_code)
+        *(.LED_const)
+  . = ALIGN(4);
   *(.cvsd_const)
   *(.cvsd_code)
 
@@ -1225,14 +1229,6 @@ SECTIONS
         *(.ui_ram)
 
         *(.fat_data_code)
-
-        *(.gpio_ram)
-        *(.LED_code)
-        *(.LED_const)
-  . = ALIGN(4);
-
-
-
       *(.usr_timer_const)
   *(.usr_timer_code)
      *(.timer_const)
@@ -1692,9 +1688,9 @@ SECTIONS
 
         tws_bulk_pool = .;
 
+        tws_bulk_pool_end = tws_bulk_pool + (2 * 1024);
 
 
-        tws_bulk_pool_end = tws_bulk_pool;
 
         . = tws_bulk_pool_end;
 

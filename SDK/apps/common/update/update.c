@@ -465,13 +465,13 @@ void update_mode_api(UPDATA_TYPE up_type, ...)
 
 
 #ifdef DEV_UPDATE_SUPPORT_JUMP
-#if TCFG_BLUETOOTH_BACK_MODE			//后台模式需要把蓝牙关掉
+#if 1//TCFG_BLUETOOTH_BACK_MODE			//后台模式需要把蓝牙关掉
     if (BT_MODULES_IS_SUPPORT(BT_MODULE_LE)) {
         ll_hci_destory();
     }
     hci_controller_destory();
 #endif
-    update_close_hw();
+    update_close_hw("null");
     ram_protect_close();
     save_spi_port();
 

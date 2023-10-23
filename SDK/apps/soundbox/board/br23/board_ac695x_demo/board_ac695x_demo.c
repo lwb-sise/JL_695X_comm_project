@@ -29,6 +29,7 @@
 #include "nandflash.h"
 #include "audio_link.h"
 #include "app_power_manage.h"
+// #include "user_head.h"
 
 #define LOG_TAG_CONST       BOARD
 #define LOG_TAG             "[BOARD]"
@@ -968,6 +969,8 @@ void board_init()
 	dev_manager_init();
 	board_devices_init();
 
+    // user_project_init();
+
 	if(get_charge_online_flag()){
     	power_set_mode(PWR_LDO15);
 	}else{
@@ -1069,7 +1072,7 @@ void board_set_soft_poweroff(void)
 #if (TCFG_SD0_ENABLE || TCFG_SD1_ENABLE)
 	sdpg_config(0);
 #endif
-
+    // user_fun_exit();
     //dac_power_off();
 }
 

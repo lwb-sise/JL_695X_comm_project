@@ -14,7 +14,7 @@
 
 #define CONFIG_DEBUG_LIB(x)         (x & LIB_DEBUG)
 
-#define CONFIG_DEBUG_ENABLE
+// #define CONFIG_DEBUG_ENABLE      //24k
 
 #ifndef CONFIG_DEBUG_ENABLE
 //#define CONFIG_DEBUG_LITE_ENABLE  //轻量级打印开关, 默认关闭
@@ -373,7 +373,7 @@
 
 #if (defined(CONFIG_CPU_BR23) || defined(CONFIG_CPU_BR25))
 //升级IO保持使能
-//#define DEV_UPDATE_SUPPORT_JUMP           //目前只有br23\br25支持
+#define DEV_UPDATE_SUPPORT_JUMP           //目前只有br23\br25支持
 #endif
 
 #if (defined(CONFIG_CPU_BR23) || defined(CONFIG_CPU_BR25))

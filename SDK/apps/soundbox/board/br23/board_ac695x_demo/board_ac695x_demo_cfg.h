@@ -29,9 +29,9 @@
 #define TCFG_APP_MUSIC_EN			        1
 #define TCFG_APP_LINEIN_EN					1
 #define TCFG_APP_FM_EN					    1
-#define TCFG_APP_PC_EN					    1
-#define TCFG_APP_RTC_EN					    1
-#define TCFG_APP_RECORD_EN				    1
+#define TCFG_APP_PC_EN					    0
+#define TCFG_APP_RTC_EN					    0
+#define TCFG_APP_RECORD_EN				    0
 #define TCFG_APP_SPDIF_EN                   0
 //*********************************************************************************//
 //                               PCM_DEBUG调试配置                                 //
@@ -84,7 +84,7 @@
 //*********************************************************************************//
 //                                 FLASH 配置                                      //
 //*********************************************************************************//
-#define TCFG_NORFLASH_DEV_ENABLE				DISABLE_THIS_MOUDLE
+#define TCFG_NORFLASH_DEV_ENABLE			DISABLE_THIS_MOUDLE
 #define TCFG_NANDFLASH_DEV_ENABLE		    DISABLE_THIS_MOUDLE
 #define TCFG_FLASH_DEV_SPI_HW_NUM			1// 1: SPI1    2: SPI2
 #define TCFG_FLASH_DEV_SPI_CS_PORT	    	IO_PORTA_03
@@ -421,7 +421,7 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_CALL_USE_DIGITAL_VOLUME		0
 
 // 使能改宏，提示音音量使用music音量
-#define APP_AUDIO_STATE_WTONE_BY_MUSIC      (1)
+#define APP_AUDIO_STATE_WTONE_BY_MUSIC      (0)
 // 0:提示音不使用默认音量； 1:默认提示音音量值
 #define TONE_MODE_DEFAULE_VOLUME            (0)
 
@@ -470,9 +470,9 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 //                                  UI 配置                                        //
 //*********************************************************************************//
-#define TCFG_UI_ENABLE 						ENABLE_THIS_MOUDLE 	//UI总开关
+#define TCFG_UI_ENABLE 						DISABLE_THIS_MOUDLE 	//UI总开关
 #define CONFIG_UI_STYLE                     STYLE_JL_LED7
-#define TCFG_UI_LED7_ENABLE 			 	ENABLE_THIS_MOUDLE 	//UI使用LED7显示
+#define TCFG_UI_LED7_ENABLE 			 	DISABLE_THIS_MOUDLE 	//UI使用LED7显示
 // #define TCFG_UI_LCD_SEG3X9_ENABLE 		ENABLE_THIS_MOUDLE 	//UI使用LCD段码屏显示
 // #define TCFG_LCD_ST7735S_ENABLE	        ENABLE_THIS_MOUDLE
 // #define TCFG_LCD_ST7789VW_ENABLE	        ENABLE_THIS_MOUDLE
@@ -512,13 +512,13 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_MUSIC_MODE_EQ_ENABLE           	1     //支持音乐模式EQ
 #define TCFG_LINEIN_MODE_EQ_ENABLE          	1     //支持linein近端EQ
 #define TCFG_FM_MODE_EQ_ENABLE              	1     //支持fm模式EQ
-#define TCFG_SPDIF_MODE_EQ_ENABLE           	1     //支持SPDIF模式EQ
-#define TCFG_PC_MODE_EQ_ENABLE              	1     //支持pc模式EQ
+#define TCFG_SPDIF_MODE_EQ_ENABLE           	0     //支持SPDIF模式EQ
+#define TCFG_PC_MODE_EQ_ENABLE              	0     //支持pc模式EQ
 #define TCFG_AUDIO_OUT_EQ_ENABLE				0 	  //高低音EQ
 #define TCFG_AUDIO_MIC_EFFECT_POST_EQ_ENABLE	0	  //MIC音效后置EQ使能(includes DRC)
 
 
-#define EQ_SECTION_MAX                      20//eq 段数
+#define EQ_SECTION_MAX                      10//eq 段数
 #define TCFG_DYNAMIC_EQ_ENABLE              0     //动态eq使能，接在eq后，需输入32bit位宽数据
 #endif//TCFG_EQ_ENABLE
 
@@ -530,8 +530,8 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_MUSIC_MODE_DRC_ENABLE          1     //支持音乐模式DRC
 #define TCFG_LINEIN_MODE_DRC_ENABLE         1     //支持LINEIN模式DRC
 #define TCFG_FM_MODE_DRC_ENABLE             1     //支持FM模式DRC
-#define TCFG_SPDIF_MODE_DRC_ENABLE          1     //支持SPDIF模式DRC
-#define TCFG_PC_MODE_DRC_ENABLE             1     //支持PC模式DRC
+#define TCFG_SPDIF_MODE_DRC_ENABLE          0     //支持SPDIF模式DRC
+#define TCFG_PC_MODE_DRC_ENABLE             0     //支持PC模式DRC
 #define TCFG_AUDIO_OUT_DRC_ENABLE			0 	  //高低音EQ后的drc
 #endif//TCFG_DRC_ENABLE
 
@@ -660,24 +660,24 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 //                                  系统配置                                         //
 //*********************************************************************************//
-#define TCFG_AUTO_SHUT_DOWN_TIME		    0   //没有蓝牙连接自动关机时间
+#define TCFG_AUTO_SHUT_DOWN_TIME		    (30*60)   //没有蓝牙连接自动关机时间
 #define TCFG_SYS_LVD_EN						1   //电量检测使能
-#define TCFG_POWER_ON_NEED_KEY				0	  //是否需要按按键开机配置
-#define TWFG_APP_POWERON_IGNORE_DEV         4000//上电忽略挂载设备，0时不忽略，非0则n毫秒忽略
+#define TCFG_POWER_ON_NEED_KEY				1	  //是否需要按按键开机配置
+#define TWFG_APP_POWERON_IGNORE_DEV         0//上电忽略挂载设备，0时不忽略，非0则n毫秒忽略
 
 #define TCFG_AUDIO_DEC_OUT_TASK				0	// 解码使用单独任务做输出
 
 //*********************************************************************************//
 //                                  蓝牙配置                                       //
 //*********************************************************************************//
-#define TCFG_USER_TWS_ENABLE                0   //tws功能使能
+#define TCFG_USER_TWS_ENABLE                1   //tws功能使能
 #define TCFG_USER_BLE_ENABLE                0   //BLE功能使能
 #define TCFG_USER_BT_CLASSIC_ENABLE         1   //经典蓝牙功能使能
 #define TCFG_BT_SUPPORT_AAC                 0   //AAC格式支持
 #define TCFG_USER_EMITTER_ENABLE            0   //emitter功能使能
 #define TCFG_BT_SNIFF_ENABLE                0   //bt sniff 功能使能
 
-#define USER_SUPPORT_PROFILE_SPP    1
+#define USER_SUPPORT_PROFILE_SPP    0
 #define USER_SUPPORT_PROFILE_HFP    1
 #define USER_SUPPORT_PROFILE_A2DP   1
 #define USER_SUPPORT_PROFILE_AVCTP  1
@@ -703,7 +703,7 @@ DAC硬件上的连接方式,可选的配置：
 #define BT_SUPPORT_DISPLAY_BAT              1   //是否使能电量检测
 #define BT_SUPPORT_MUSIC_VOL_SYNC           1   //是否使能音量同步
 
-#define TCFG_BLUETOOTH_BACK_MODE			1	//后台模式
+#define TCFG_BLUETOOTH_BACK_MODE			0	//后台模式
 
 #if (TCFG_USER_TWS_ENABLE && TCFG_BLUETOOTH_BACK_MODE) && (TCFG_BT_SNIFF_ENABLE==0) && defined(CONFIG_LOCAL_TWS_ENABLE)
 #define TCFG_DEC2TWS_ENABLE					1	// 本地解码转发
@@ -737,7 +737,7 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_AEC_ENABLE 0
 #endif//TCFG_AEC_ENABLE
 #endif
-
+//*********************************************************************************//
 //                                  linein配置                                     //
 //*********************************************************************************//
 #define TCFG_LINEIN_ENABLE					TCFG_APP_LINEIN_EN	// linein使能
@@ -755,23 +755,23 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 //                                  music 配置                                     //
 //*********************************************************************************//
-#define TCFG_DEC_G729_ENABLE                ENABLE
+#define TCFG_DEC_G729_ENABLE                DISABLE
 #define TCFG_DEC_MP3_ENABLE					ENABLE
 #define TCFG_DEC_WMA_ENABLE					ENABLE
 #define TCFG_DEC_WAV_ENABLE					ENABLE
 #define TCFG_DEC_FLAC_ENABLE				ENABLE
 #define TCFG_DEC_APE_ENABLE					ENABLE
-#define TCFG_DEC_M4A_ENABLE					ENABLE
-#define TCFG_DEC_ALAC_ENABLE				ENABLE
-#define TCFG_DEC_AMR_ENABLE					ENABLE
-#define TCFG_DEC_DTS_ENABLE					ENABLE
+#define TCFG_DEC_M4A_ENABLE					DISABLE
+#define TCFG_DEC_ALAC_ENABLE				DISABLE
+#define TCFG_DEC_AMR_ENABLE					DISABLE
+#define TCFG_DEC_DTS_ENABLE					DISABLE
 #define TCFG_DEC_G726_ENABLE			    DISABLE
 #define TCFG_DEC_MIDI_ENABLE			    DISABLE
 #define TCFG_DEC_MTY_ENABLE					DISABLE
 #define TCFG_DEC_SBC_ENABLE					ENABLE
 #define TCFG_DEC_PCM_ENABLE					ENABLE
 #define TCFG_DEC_CVSD_ENABLE				ENABLE
-#define TCFG_DEC_WTGV2_ENABLE				DISABLE
+#define TCFG_DEC_WTGV2_ENABLE				ENABLE
 
 #define TCFG_DEC_ID3_V1_ENABLE				DISABLE
 #define TCFG_DEC_ID3_V2_ENABLE				DISABLE
@@ -795,7 +795,7 @@ DAC硬件上的连接方式,可选的配置：
 
 #if (TCFG_FM_INSIDE_ENABLE && TCFG_FM_ENABLE)
 #if (((TCFG_USER_TWS_ENABLE) || (RECORDER_MIX_EN) || (TCFG_MIC_EFFECT_ENABLE)))
-#define TCFG_CODE_RUN_RAM_FM_MODE 					DISABLE_THIS_MOUDLE  	//FM模式 代码跑ram
+#define TCFG_CODE_RUN_RAM_FM_MODE 					ENABLE_THIS_MOUDLE  	//FM模式 代码跑ram
 #else
 #define TCFG_CODE_RUN_RAM_FM_MODE 					ENABLE_THIS_MOUDLE  	//FM模式 代码跑ram
 #endif

@@ -28,6 +28,7 @@
 #include "user_cfg.h"
 #include "bt_tws.h"
 #include "bt.h"
+// #include "user_head.h"
 
 #define LOG_TAG_CONST       APP_ACTION
 #define LOG_TAG             "[APP_ACTION]"
@@ -191,6 +192,7 @@ __retry:
 static void poweroff_done(void)
 {
     poweroff_wait_ui();//等待关机显示完毕
+    // user_fun_exit();
     while (get_ui_busy_status()) {
     }
 #if (TCFG_CHARGE_ENABLE && TCFG_CHARGE_POWERON_ENABLE)
