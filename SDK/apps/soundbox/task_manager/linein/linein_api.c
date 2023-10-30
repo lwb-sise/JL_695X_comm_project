@@ -20,7 +20,7 @@
 #ifndef CONFIG_MEDIA_NEW_ENABLE
 #include "application/audio_output_dac.h"
 #endif
-
+#include "user_head.h"
 /*************************************************************
    此文件函数主要是linein实现api
 **************************************************************/
@@ -354,7 +354,10 @@ void linein_key_vol_up()
         if (tone_get_status() == 0) {
             /* tone_play(TONE_MAX_VOL); */
 #if TCFG_MAX_VOL_PROMPT
-            tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 0);
+        extern void user_stop_linein(void);
+        user_stop_linein();
+        flag_vol_hold_press = 1;
+        tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 1);
 #endif
         }
     }
@@ -375,6 +378,18 @@ void linein_key_vol_down()
         __this->volume --;
         linein_volume_set(__this->volume);
     }
+#if TCFG_MIN_VOL_PROMPT
+    else 
+	{
+		if (tone_get_status() == 0) 
+		{        
+			extern void user_stop_linein(void);
+            user_stop_linein();
+            flag_vol_hold_press = 1;
+            tone_play_by_path(TONE_MIN_VOL, 1);			
+        }
+    }
+#endif    
     vol = __this->volume;
     UI_SHOW_MENU(MENU_MAIN_VOL, 1000, vol, NULL);
     log_info("vol-:%d\n", __this->volume);

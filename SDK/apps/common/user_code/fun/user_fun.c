@@ -9,9 +9,6 @@ void user_project_init(){
     //电源维持初始化
     u_maintenance_voltage_init();
 
-    //外部电源检测初始化
-    // u_check_vbat_init();
-
     // 功放初始化
     u_pa_io_init();
 

@@ -1648,7 +1648,7 @@ void bt_mode_stop_other_mode_tone(void)
 /*----------------------------------------------------------------------------*/
 void bt_status_a2dp_media_start(struct bt_event *bt)
 {
-
+    bt_set_led_status(STATUS_BT_PLAY);
     __this->call_flag = 0;
     __this->a2dp_start_flag = 1;
 #if (TCFG_DEC2TWS_ENABLE)
@@ -1684,7 +1684,7 @@ void bt_status_a2dp_media_stop(struct bt_event *bt)
     __this->a2dp_start_flag = 0;
     bt_drop_a2dp_frame_stop();
     a2dp_dec_close();
-
+    bt_set_led_status(STATUS_BT_CONN);
 #if (TCFG_DEC2TWS_ENABLE)
     if (is_tws_active_device()) {
         return ;

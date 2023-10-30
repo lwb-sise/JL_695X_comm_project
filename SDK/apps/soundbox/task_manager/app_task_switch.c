@@ -4,9 +4,39 @@
 #include "key_driver.h"
 #include "key_event_deal.h"
 #include "audio_recorder_mix.h"
+#include "user_head.h"
 
 ///模式配置表，这里可以配置切换模式的顺序，方案根据需求定义
 static const u8 app_task_list[] = {
+#if USE_SUOAI_CHANGE_MODE_LIST
+    #if TCFG_APP_BT_EN
+        APP_BT_TASK,
+    #endif
+    #if TCFG_APP_FM_EN
+        APP_FM_TASK,
+    #endif
+    #if TCFG_APP_MUSIC_EN
+        APP_MUSIC_TASK,
+    #endif
+    #if TCFG_APP_RECORD_EN
+        APP_RECORD_TASK,
+    #endif
+    #if TCFG_APP_LINEIN_EN
+        APP_LINEIN_TASK,
+    #endif
+    #if TCFG_APP_RTC_EN
+        APP_RTC_TASK,
+    #endif
+    #if TCFG_APP_SLEEP_EN
+        APP_SLEEP_TASK,
+    #endif
+    #if TCFG_APP_PC_EN
+        APP_PC_TASK,
+    #endif
+    #if TCFG_APP_SPDIF_EN
+        APP_SPDIF_TASK,
+    #endif
+#else
 #if TCFG_APP_BT_EN
     APP_BT_TASK,
 #endif
@@ -33,6 +63,7 @@ static const u8 app_task_list[] = {
 #endif
 #if TCFG_APP_SPDIF_EN
     APP_SPDIF_TASK,
+    #endif
 #endif
 };
 

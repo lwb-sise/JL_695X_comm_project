@@ -26,6 +26,7 @@
 //#define LOG_DUMP_ENABLE
 //#define LOG_CLI_ENABLE
 #include "debug.h"
+#include "user_head.h"
 
 #define KEY_EVENT_CLICK_ONLY_SUPPORT	1 	//是否支持某些按键只响应单击事件
 
@@ -161,6 +162,18 @@ static void key_driver_scan(void *_scan_para)
                     goto _notify;
                 } else {	//按键抬起后等待下次延时时间未到
                     scan_para->click_delay_cnt++;
+#if USE_CALL_DOUBLE_CLICK				
+					if((scan_para->notify_value!=DOUBLE_KEY_NUM)
+#if 1						
+						&&(scan_para->notify_value!=DOUBLE_KEY_NUM1)
+#endif
+						)
+					{
+						key_event = KEY_EVENT_CLICK;
+						key_value = scan_para->notify_value;
+						goto _notify;
+					}	
+#endif                    
                     goto _scan_end; //按键抬起后延时时间未到, 返回
                 }
             } else {

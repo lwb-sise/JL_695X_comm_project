@@ -16,6 +16,7 @@
 #include "fm/fm_api.h"
 #include "fm/fm_manage.h"
 #include "fm/fm_rw.h"
+#include "user_head.h"
 
 #define LOG_TAG_CONST       APP_FM
 #define LOG_TAG             "[APP_FM]"
@@ -43,6 +44,58 @@
 
 
 #if TCFG_APP_FM_EN
+
+#if USE_FM_VOL_FADE_IN
+/**
+ * @brief FM音量渐进
+ * 
+ */
+static u8 sys_target=0;
+static u16 fm_digital_Fade_in_id=0;
+static u8 exit_fm=0;
+
+
+void fm_digital_Fade_in_end(void){
+    if(fm_digital_Fade_in_id){
+        sys_timer_del(fm_digital_Fade_in_id);
+        fm_digital_Fade_in_id=0;
+    }
+    int music_volume;
+    syscfg_read(CFG_MUSIC_VOL, &music_volume, 1);
+    printf("[FM END]+++++++++++++++++++++{%d %d } exit_fm==%d",music_volume,app_audio_get_volume(APP_AUDIO_CURRENT_STATE),exit_fm);
+    if (exit_fm)
+    {
+        if (music_volume>=0)
+        {
+            app_audio_set_volume(APP_AUDIO_STATE_MUSIC, music_volume, 1);
+        }else{
+            app_audio_set_volume(APP_AUDIO_STATE_MUSIC, SYS_DEFAULT_VOL, 1);
+        }
+    }else{
+        app_audio_set_volume(APP_AUDIO_STATE_MUSIC, sys_target, 1);
+    }
+    sys_target=0;
+}
+
+void fm_digital_Fade_in(void *priv){
+    u8 vol=app_audio_get_volume(APP_AUDIO_STATE_MUSIC);
+    if(sys_target>vol){
+        app_audio_set_volume(APP_AUDIO_STATE_MUSIC, vol+1, 1);
+    }else{
+        fm_digital_Fade_in_end();
+    }
+    vol=app_audio_get_volume(APP_AUDIO_STATE_MUSIC);
+    printf("------fm %d",vol);
+}
+
+void fm_digital_Fade_in_start(void){
+    if(fm_digital_Fade_in_id){
+        fm_digital_Fade_in_end();
+    }
+    fm_digital_Fade_in_id=sys_timer_add(NULL,fm_digital_Fade_in,350);
+}
+#endif
+
 static u8 fm_idle_flag = 1;
 //*----------------------------------------------------------------------------*/
 /**@brief    fm按键消息入口
@@ -147,6 +200,10 @@ static int fm_event_handler(struct sys_event *event)
                 log_info("fm online \n");
             } else if (event->u.dev.event == DEVICE_EVENT_OUT) {
                 log_info("fm offline \n");
+#if USE_FM_VOL_FADE_IN
+                exit_fm=1;
+                fm_digital_Fade_in_end();
+#endif                
                 app_task_switch_next();
             }
             return true;
@@ -196,6 +253,13 @@ static void  fm_tone_play_end_callback(void *priv, int flag)
     switch (index) {
     case IDEX_TONE_FM:
         ///提示音播放结束， 启动播放器播放
+        u_pa_control(PA_CLASS_AB);
+#if USE_FM_VOL_FADE_IN
+        sys_target=FM_FADE_IN_MAX_VOL;
+        printf("+++++++++++++++++++++{%d %d}",sys_target,app_audio_get_volume(APP_AUDIO_CURRENT_STATE));
+        app_audio_set_volume(APP_AUDIO_STATE_MUSIC, 0, 0);
+        fm_digital_Fade_in_start();
+#endif
         fm_app_start();
         break;
     default:
@@ -214,6 +278,9 @@ void app_fm_task()
 {
     int msg[32];
     fm_app_init();
+#if USE_FM_VOL_FADE_IN
+    exit_fm=0;
+#endif
 #if TCFG_DEC2TWS_ENABLE
     extern void set_tws_background_connected_flag(u8 flag);
     extern u8 get_tws_background_connected_flag();
@@ -244,6 +311,10 @@ void app_fm_task()
         }
 
         if (app_task_exitting()) {
+#if USE_FM_VOL_FADE_IN
+            exit_fm=1;
+            fm_digital_Fade_in_end();
+#endif
             fm_app_uninit();
             return;
         }

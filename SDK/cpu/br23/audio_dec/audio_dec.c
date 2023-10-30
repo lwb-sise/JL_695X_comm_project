@@ -37,7 +37,7 @@
 #include "audio_fmtx.h"
 #include "audio_sbc_codec.h"
 #endif /*CONFIG_LITE_AUDIO*/
-
+#include "user_head.h"
 #if (AUDIO_OUTPUT_INCLUDE_IIS)
 void *iis_digvol_last = NULL;
 void *iis_digvol_last_entry = NULL;
@@ -1010,6 +1010,7 @@ REGISTER_LP_TARGET(audio_dec_init_lp_target) = {
 
 void audio_mix_out_automute_mute(u8 mute)
 {
+    u_pa_ex_info_set(PA_SYS_MUTE,mute);
     printf(">>>>>>>>>>>>>>>>>>>> %s\n", mute ? ("MUTE") : ("UNMUTE"));
 }
 

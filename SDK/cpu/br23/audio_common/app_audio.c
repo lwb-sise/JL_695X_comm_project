@@ -12,6 +12,7 @@
 #include "application/audio_dig_vol.h"
 
 #include "update.h"
+#include "user_head.h"
 
 #if defined(AUDIO_OUTPUT_WAY) && (AUDIO_OUTPUT_WAY == AUDIO_OUTPUT_WAY_FM)
 #include "fm_emitter/fm_emitter_manage.h"
@@ -126,6 +127,9 @@ static void app_audio_volume_save_do(void *priv)
         __this->save_vol_cnt = 0;
         local_irq_enable();
         log_info("VOL_SAVE\n");
+#if USE_FM_VOL_FADE_IN
+        if (!app_check_curr_task(APP_FM_TASK))
+#endif
         syscfg_write(CFG_MUSIC_VOL, &app_var.music_volume, 1);
         return;
     }
@@ -137,7 +141,11 @@ static void app_audio_volume_change(void)
     local_irq_disable();
     __this->save_vol_cnt = 0;
     if (__this->save_vol_timer == 0) {
-        __this->save_vol_timer = sys_timer_add(NULL, app_audio_volume_save_do, 1000);//要使用软件定时器 中断里不能操作vm
+#if USE_FM_VOL_FADE_IN
+        __this->save_vol_timer = sys_timer_add(NULL, app_audio_volume_save_do, 100);//中断里不能操作vm 关中断不能操作vm
+#else
+        __this->save_vol_timer = sys_timer_add(NULL, app_audio_volume_save_do, 1000);//中断里不能操作vm 关中断不能操作vm
+#endif
     }
     local_irq_enable();
 }

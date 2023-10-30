@@ -20,6 +20,7 @@
 #include "ui/ui_style.h"
 #include "audio_dec/audio_dec_fm.h"
 #include "fm/fm_inside/fm_inside.h"
+#include "user_head.h"
 
 #define LOG_TAG_CONST       APP_FM
 #define LOG_TAG             "[APP_FM]"
@@ -411,7 +412,7 @@ void fm_scan_all()
 
     __fm_reverb_pause();
     fm_app_mute(1);
-
+    ui_update_status(STATUS_FM_SCAN);
 #if TCFG_FM_INSIDE_ENABLE
     fm_inside_trim(REAL_FREQ(__this->scan_fre) * 10);
 #endif
@@ -474,7 +475,14 @@ void fm_volume_up()
 
     app_audio_volume_up(1);
     log_info("fm vol+: %d", app_audio_get_volume(APP_AUDIO_CURRENT_STATE));
-
+#if TCFG_MAX_VOL_PROMPT
+    if (app_audio_get_volume(APP_AUDIO_CURRENT_STATE) == app_audio_get_max_volume()) {
+        if (tone_get_status() == 0) {
+            flag_vol_hold_press = 1;
+            tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 1);
+        }
+    }
+#endif
 #if (TCFG_DEC2TWS_ENABLE)
     bt_tws_sync_volume();
 #endif
@@ -493,7 +501,14 @@ void fm_volume_down()
     }
     app_audio_volume_down(1);
     log_info("fm vol-: %d", app_audio_get_volume(APP_AUDIO_CURRENT_STATE));
-
+#if TCFG_MIN_VOL_PROMPT
+    if (app_audio_get_volume(APP_AUDIO_CURRENT_STATE) <= 0) {
+            if (tone_get_status() == 0) {
+                flag_vol_hold_press = 1;
+                tone_play_by_path(TONE_MIN_VOL, 1);
+            }
+    }
+#endif
 #if (TCFG_DEC2TWS_ENABLE)
     bt_tws_sync_volume();
 #endif

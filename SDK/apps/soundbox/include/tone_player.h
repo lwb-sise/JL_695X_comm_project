@@ -27,7 +27,7 @@
 #define TONE_STOP       0
 #define TONE_START      1
 
-#define CONFIG_USE_DEFAULT_SINE     1
+#define CONFIG_USE_DEFAULT_SINE     0
 
 #define TONE_DEFAULT_VOL   SYS_MAX_VOL
 
@@ -93,6 +93,20 @@ enum {
 #define TONE_RTC 				TONE_RES_ROOT_PATH"tone/rtc.*"
 #define TONE_RECORD 			TONE_RES_ROOT_PATH"tone/record.*"
 #define TONE_SPDIF 			    TONE_RES_ROOT_PATH"tone/spdif.*"
+#define TONE_MIN_VOL			TONE_MAX_VOL //TONE_RES_ROOT_PATH"tone/vol_min.*"
+#define TONE_FM_SCAN			TONE_RES_ROOT_PATH"tone/fm_scan.*"
+#define TONE_TWS_START			TONE_RES_ROOT_PATH"tone/tws_sta.*"
+#define TONE_POWER_ON_MUTE      TONE_RES_ROOT_PATH"tone/mute.*"
+#define TONE_BAT1				TONE_RES_ROOT_PATH"tone/bat1.*"
+#define TONE_BAT2				TONE_RES_ROOT_PATH"tone/bat2.*"
+#define TONE_BAT3				TONE_RES_ROOT_PATH"tone/bat3.*"
+#define TONE_BAT4				TONE_RES_ROOT_PATH"tone/bat4.*"
+#define TONE_BAT5				TONE_RES_ROOT_PATH"tone/bat5.*"
+#define TONE_BAT6				TONE_RES_ROOT_PATH"tone/bat6.*"
+#define TONE_BAT7				TONE_RES_ROOT_PATH"tone/bat7.*"
+#define TONE_BAT8				TONE_RES_ROOT_PATH"tone/bat8.*"
+#define TONE_BAT9				TONE_RES_ROOT_PATH"tone/bat9.*"
+#define TONE_BAT10				TONE_RES_ROOT_PATH"tone/bat10.*"
 
 #ifdef CONFIG_CPU_BR18
 #undef TONE_POWER_ON
@@ -148,6 +162,7 @@ enum {
 #endif
 
 #define TONE_SIN_NORMAL			DEFAULT_SINE_TONE(SINE_WTONE_NORAML)
+#define TONE_NORMAL             DEFAULT_SINE_TONE(SINE_WTONE_NORAML)
 
 extern const char *tone_table[];
 int tone_play(const char *name, u8 preemption);

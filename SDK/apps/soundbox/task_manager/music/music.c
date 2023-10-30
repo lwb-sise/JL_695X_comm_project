@@ -42,9 +42,13 @@
 /* #define LOG_DUMP_ENABLE */
 #define LOG_CLI_ENABLE
 #include "debug.h"
+#include "user_head.h"
 
 #if TCFG_APP_MUSIC_EN
 
+#if DEV_SD_AND_USB_MODE_CHANGE
+u8 flag_music_can_exit=0;
+#endif
 static u8 music_idle_flag = 1;
 
 ///模式参数结构体
@@ -73,7 +77,7 @@ static struct __breakpoint *breakpoint = NULL;
 static void music_player_play_start(void);
 
 ///设备提示音使能
-#define MUSIC_DEVICE_TONE_EN				0
+#define MUSIC_DEVICE_TONE_EN				1
 #if (MUSIC_DEVICE_TONE_EN)
 struct __dev_tone {
     char *logo;
@@ -92,8 +96,8 @@ enum {
     DEVICE_INDEX_SD1_REC,
 };
 const struct __dev_tone device_tone[] = {
-    {"udisk0", 		"udisk0", 	TONE_RES_ROOT_PATH"tone/udisk.*", 	DEVICE_INDEX_UDISK}			,
-    {"udisk0_rec",  "udisk0", 	TONE_RES_ROOT_PATH"tone/udisk.*", 	DEVICE_INDEX_UDISK_REC}		,
+    {"udisk0", 		"udisk0", 	TONE_RES_ROOT_PATH"tone/usb.*", 	DEVICE_INDEX_UDISK}			,
+    {"udisk0_rec",  "udisk0", 	TONE_RES_ROOT_PATH"tone/usb.*", 	DEVICE_INDEX_UDISK_REC}		,
     {"sd0",  		"sd0", 		TONE_RES_ROOT_PATH"tone/sd.*", 	 	DEVICE_INDEX_SD0}		 	,
     {"sd0_rec",  	"sd0", 		TONE_RES_ROOT_PATH"tone/sd.*", 	 	DEVICE_INDEX_SD0_REC}		,
     {"sd1",  		"sd1", 		TONE_RES_ROOT_PATH"tone/sd.*", 	 	DEVICE_INDEX_SD1}			,
@@ -621,7 +625,11 @@ static int music_key_event_opr(struct sys_event *event)
     ///播放器退出处理
     case KEY_MUSIC_PLAYER_QUIT:
         log_i("KEY_MUSIC_PLAYER_QUIT !!\n");
+#if USE_DEV_OUT_TO_BT
+        app_task_switch_to(APP_BT_TASK);
+#else
         app_task_switch_next();
+#endif
         break;
     ///结束消息处理
     case KEY_MUSIC_PLAYER_END:
@@ -685,6 +693,9 @@ static int music_key_event_opr(struct sys_event *event)
     case KEY_MUSIC_AUTO_NEXT_DEV:
     case  KEY_MUSIC_CHANGE_DEV:
         log_i("KEY_MUSIC_CHANGE_DEV\n");
+#if DEV_SD_AND_USB_MODE_CHANGE
+        flag_music_can_exit=1;
+#endif        
         auto_next_dev = ((msg[0] == KEY_MUSIC_AUTO_NEXT_DEV) ? 1 : 0);
         logo = music_player_get_dev_next(auto_next_dev);
         printf("next dev = %s\n", logo);
@@ -974,6 +985,9 @@ static void music_task_close()
 #if (TCFG_LRC_LYRICS_ENABLE)
     extern void lrc_exit(void);
     lrc_exit();
+#endif
+#if DEV_SD_AND_USB_MODE_CHANGE
+    flag_music_can_exit = 0;
 #endif
     memset(__this, 0, sizeof(struct __music));
     music_idle_flag = 1;

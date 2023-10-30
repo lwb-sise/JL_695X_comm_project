@@ -1,5 +1,5 @@
 #include "system/includes.h"
-
+#include "user_head.h"
 
 
 static const u8 SPI1_DO[2] = {
@@ -10,11 +10,19 @@ static const u8 SPI2_DO[2] = {
     IO_PORTB_10,//'A'
     IO_PORT_DM  //'B'
 };
-#define LED_SPI                 JL_SPI1
-#define LED_SPI_PORT            'B'
+#define LED_SPI                 JL_SPI2
+#define LED_SPI_PORT            'A'
 #define LED_SPI_DAT_BAUD        8000000
 #define LED_SPI_REST_BAUD       1000000
 #define LED_SPI_CLOCK_BASE		clk_get("lsb")
+
+#if M_USER_RGB_DOUBLE_SPI
+    #define LED_SPI1                 JL_SPI1
+    #define LED_SPI_PORT1           'B'
+    #define LED_SPI_DAT_BAUD1       8000000
+    #define LED_SPI_REST_BAUD1      1000000
+    #define LED_SPI_CLOCK_BASE1		clk_get("lsb")
+#endif
 
 static OS_SEM led_spi_sem;
 static u32 spi_do = 0;
@@ -29,6 +37,35 @@ void led_spi_isr()
     os_sem_post(&led_spi_sem);
     led_spi_busy = 0;
 }
+
+#if M_USER_RGB_DOUBLE_SPI
+___interrupt
+void led_spi_isr1()
+{
+    LED_SPI1->CON &= ~BIT(13);   //关闭中断
+    LED_SPI1->CON |=  BIT(14);   //清pnding
+    os_sem_post(&led_spi_sem);
+    led_spi_busy = 0;
+}
+void led_spi1_init(void)
+{
+    if ((u32)LED_SPI1 == (u32)JL_SPI1) {
+        spi_do = SPI1_DO[LED_SPI_PORT1 - 'A'];
+        SFR(JL_IOMAP->CON1, 4, 1, LED_SPI_PORT1 - 'A');
+        request_irq(IRQ_SPI1_IDX, 0, led_spi_isr1, 0);
+    } else {
+        spi_do = SPI2_DO[LED_SPI_PORT1 - 'A'];
+        SFR(JL_IOMAP->CON1, 16, 1, LED_SPI_PORT1 - 'A');
+        request_irq(IRQ_SPI2_IDX, 0, led_spi_isr1, 0);
+    }
+    gpio_set_die(spi_do, 1);
+    gpio_set_direction(spi_do, 0);
+    gpio_set_pull_up(spi_do, 0);
+    gpio_set_pull_down(spi_do, 0);
+    gpio_write(spi_do, 0);
+    JL_SPI1->CON = 0x4021;
+}
+#endif
 
 void led_spi_init(void)
 {
@@ -47,9 +84,15 @@ void led_spi_init(void)
     gpio_set_pull_down(spi_do, 0);
     gpio_write(spi_do, 0);
 
+#if M_USER_RGB_DOUBLE_SPI
+    os_sem_create(&led_spi_sem, 2);
+#else
     os_sem_create(&led_spi_sem, 1);
-
+#endif
     LED_SPI->CON = 0x4021;
+#if M_USER_RGB_DOUBLE_SPI
+    led_spi1_init();
+#endif
 }
 
 void led_spi_rgb_to_24byte(u8 r, u8 g, u8 b, u8 *buf, int idx)
@@ -76,6 +119,19 @@ void led_spi_rest()
     LED_SPI->CON |= BIT(14);
 }
 
+#if M_USER_RGB_DOUBLE_SPI
+void led_spi_rest1()
+{
+    u8 tmp_buf[16] = {0};
+    LED_SPI1->BAUD = LED_SPI_CLOCK_BASE1 / LED_SPI_REST_BAUD1- 1;
+    LED_SPI1->CON |= BIT(14);
+    LED_SPI1->ADR = (u32)tmp_buf;
+    LED_SPI1->CNT = 16;
+    while (!(LED_SPI1->CON & BIT(15)));
+    LED_SPI1->CON |= BIT(14);
+}
+#endif
+
 void led_spi_send_rgbbuf(u8 *rgb_buf, u16 led_num) //rgb_buf的大小 至少要等于 led_num * 24
 {
     if (!led_num) {
@@ -94,6 +150,27 @@ void led_spi_send_rgbbuf(u8 *rgb_buf, u16 led_num) //rgb_buf的大小 至少要�
     LED_SPI->CON |= BIT(14);
     led_spi_busy = 0;
 }
+
+#if M_USER_RGB_DOUBLE_SPI
+void led_spi_send_rgbbuf1(u8 *rgb_buf, u16 led_num) //rgb_buf的大小 至少要等于 led_num * 24
+{
+    if (!led_num) {
+        return;
+    }
+    while (led_spi_sus) {
+        os_time_dly(1);
+    }
+    led_spi_busy = 1;
+    led_spi_rest1();
+    LED_SPI1->BAUD = LED_SPI_CLOCK_BASE1 / LED_SPI_DAT_BAUD1 - 1;
+    LED_SPI1->CON |= BIT(14);
+    LED_SPI1->ADR = (u32)rgb_buf;
+    LED_SPI1->CNT = led_num * 24;
+    while (!(LED_SPI1->CON & BIT(15)));
+    LED_SPI1->CON |= BIT(14);
+    led_spi_busy = 0;
+}
+#endif
 
 void led_spi_send_rgbbuf_isr(u8 *rgb_buf, u16 led_num) //rgb_buf的大小 至少要等于 led_num * 24
 {
@@ -142,7 +219,10 @@ u8 led_spi_resume(void)
     return 0;
 }
 
-static u8 spi_dat_buf[24 * 2] __attribute__((aligned(4)));
+u8 spi_dat_buf[24 * USER_RGB_NUM] __attribute__((aligned(4)));
+#if M_USER_RGB_DOUBLE_SPI
+u8 spi_dat_buf1[24 * USER_RGB_NUM_1] __attribute__((aligned(4)));
+#endif
 extern void wdt_clear();
 void led_spi_test(void)
 {

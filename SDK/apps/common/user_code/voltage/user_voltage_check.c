@@ -73,7 +73,9 @@ void u_check_vbat_init(void){
     os_time_dly(1);
 
     adc_add_sample_ch(info_check_vbat.ad_ch);
+#ifdef CONFIG_CPU_BR25
     adc_set_sample_freq(info_check_vbat.ad_ch, info_check_vbat.sample_freq);
+#endif
     log_info("u_check_vbat_init ok!!!");
     #endif 
 }

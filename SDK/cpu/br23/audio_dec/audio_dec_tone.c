@@ -5,6 +5,7 @@
 #include "app_main.h"
 #include "clock_cfg.h"
 #include "audio_dec.h"
+#include "user_head.h"
 
 #define AUDIO_DEC_TONE_AT_CODE_EVENT_CB		AT(.audio_dec_tone_event_callback)
 
@@ -279,6 +280,10 @@ static void tone_dec_end_ctrl(struct tone_dec_handle *dec)
         tone_dec_list_play(dec, 0);
     }
     os_mutex_post(&dec->mutex);
+#if TCFG_APP_LINEIN_EN	&& USE_TONE_END_LINEIN_RESTART
+    extern void line_tone_end_deal(void);
+    line_tone_end_deal();	
+#endif    
 }
 
 /*----------------------------------------------------------------------------*/

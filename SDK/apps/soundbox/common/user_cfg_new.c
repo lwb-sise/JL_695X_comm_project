@@ -424,7 +424,23 @@ void cfg_file_parse(u8 idx)
         s8 default_volume = -1;
         s8 music_volume = -1;
 #if SYS_DEFAULT_VOL
-        default_volume = audio_cfg.default_vol;
+#if USE_SUOAI_VOL_SAVE
+        s8 vm_volume =-1;
+        syscfg_read(CFG_MUSIC_VOL, &vm_volume, 1);
+        if (vm_volume>=0)
+        {//音量记忆-若记忆音量大于最大音量的50%则设置默认音量为记忆音量，否则为最大音量的50%
+            if (vm_volume>(audio_cfg.max_sys_vol / 2))
+            {
+                default_volume = vm_volume;
+            }else{
+                default_volume = audio_cfg.max_sys_vol / 2;
+            }
+            log_info(">>>>>>>>>>>>>>vm_volume==%d",vm_volume);
+        }else
+#endif
+        {//若无记忆音量则使用宏配置的默认音量
+            default_volume = audio_cfg.default_vol;
+        }
 #else
         ret = syscfg_read(CFG_SYS_VOL, &default_volume, 1);
         if (ret < 0) {

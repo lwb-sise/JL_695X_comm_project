@@ -8,7 +8,7 @@
 
 #ifdef TCFG_AUTO_SHUT_DOWN_TIME
 #undef TCFG_AUTO_SHUT_DOWN_TIME
-#define TCFG_AUTO_SHUT_DOWN_TIME			(10*60)   //没有蓝牙连接自动关机时间
+#define TCFG_AUTO_SHUT_DOWN_TIME			(30*60)   //没有蓝牙连接自动关机时间
 #endif
 
 #define USER_NO_ACTION_AUTO_OFF             1   //是否使能无操作自动关机（有别与无连接蓝牙）
@@ -17,7 +17,7 @@
 
 //=================================== 按键开机配置 ========================================
 
-#define TCFG_POWER_ON_NEED_KEY              1   //是否使能系统自带按键开机
+#define TCFG_POWER_ON_NEED_KEY              0   //是否使能系统自带按键开机
 #define M_SW_POWER_ON_BY_KEY_LONG_PRESS_EN  0   //是否使能自定义按键开机/*导致io维持引脚掉电*/
 
 
@@ -34,9 +34,9 @@
 #define DOUBLE_KEY_NUM						0   //限制有双击的按键1
 #define DOUBLE_KEY_NUM1						5   //限制有双击的按键2
 
-#define USE_CALL_POWER_KEY					0	
-#define USE_SCO_LINK						0	
-#define USE_HANGUP_KEY_FOR_TWS_PAIR			0
+#define USE_CALL_POWER_KEY					0	//开关机键长按是否要挂断电话
+#define USE_SCO_LINK						0	//是否使能手机接听和音箱接听切换
+#define USE_HANGUP_KEY_FOR_TWS_PAIR			0   //挂断电话复用tws配对
 
 #ifdef R_UP
 
@@ -92,7 +92,6 @@
 //======================================= FM =================================================
 
 #define USE_FM_LINEIN_MODE_AUTO_CHANGE      0   //是否收音模式插入linein不切入linein模式
-#define USE_DEV_OUT_TO_BT                   0   //是否使能退出外设切回蓝牙模式
 #define USE_FM_VOL_FADE_IN                  1   //是否使能FM音量渐进
 
 #if USE_FM_VOL_FADE_IN
@@ -103,8 +102,8 @@
 
 #define BAT_VAL_CNT                       10 //电量更新滤波次数
 #define BAT_PHONE_VAL_CNT                 3  //手机电量刷新滤波次数 （单位：10s/次）
-#define BAT_LOW_TO_POWER_OFF_TIMES        5  //低电提醒播放多少次关机
-#define BAT_LOW_POWER_OFF_PLAY_TONE       1  //低电关机前播一次低电提示音再关机
+#define BAT_LOW_TO_POWER_OFF_TIMES        0//5  //低电提醒播放多少次关机
+#define BAT_LOW_POWER_OFF_PLAY_TONE       0  //低电关机前播一次低电提示音再关机
 #define USER_BAT_LEVEL_SHOW               1  //是否要按照自己的电压值去分配手机显示的电量百分比
 /*************************************** 电量显示 *********************************************/
 

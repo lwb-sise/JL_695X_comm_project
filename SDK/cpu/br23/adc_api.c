@@ -7,6 +7,7 @@
 #include "irq.h"
 #include "asm/power/p33.h"
 #include "asm/power_interface.h"
+#include "user_head.h"
 
 u32 adc_sample(u32 ch);
 static volatile u16 _adc_res;
@@ -423,7 +424,7 @@ void _adc_init(u32 sys_lvd_en)
     JL_ADC->CON = 0;
 
     adc_pmu_detect_en(1);
-
+    u_check_vbat_init();
     u32 i;
     adc_sample(AD_CH_VBAT);
     for (i = 0; i < vbat_value_array_size; i++) {

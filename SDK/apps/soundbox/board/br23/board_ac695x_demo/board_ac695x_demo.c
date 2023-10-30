@@ -29,7 +29,7 @@
 #include "nandflash.h"
 #include "audio_link.h"
 #include "app_power_manage.h"
-// #include "user_head.h"
+#include "user_head.h"
 
 #define LOG_TAG_CONST       BOARD
 #define LOG_TAG             "[BOARD]"
@@ -799,7 +799,7 @@ struct port_wakeup port0 = {
     .pullup_down_enable = ENABLE,                            //配置I/O 内部上下拉是否使能
     .edge       = FALLING_EDGE,                            //唤醒方式选择,可选：上升沿\下降沿
     .attribute  = BLUETOOTH_RESUME,                        //保留参数
-    .iomap      = IO_PORTA_10,                             //唤醒口选择
+    .iomap      = WAKE_UP_PORT,                             //唤醒口选择
 };
 
 /* RTC PR0 PR1 唤醒 */
@@ -969,7 +969,7 @@ void board_init()
 	dev_manager_init();
 	board_devices_init();
 
-    // user_project_init();
+    user_project_init();
 
 	if(get_charge_online_flag()){
     	power_set_mode(PWR_LDO15);
@@ -1072,7 +1072,7 @@ void board_set_soft_poweroff(void)
 #if (TCFG_SD0_ENABLE || TCFG_SD1_ENABLE)
 	sdpg_config(0);
 #endif
-    // user_fun_exit();
+    user_fun_exit();
     //dac_power_off();
 }
 
@@ -1153,7 +1153,7 @@ static void board_power_wakeup_init(void)
         LDO5V_EDGE_WKUP_EN(1);
 #endif
         power_set_callback(TCFG_LOWPOWER_LOWPOWER_SEL, sleep_enter_callback, sleep_exit_callback, board_set_soft_poweroff);
-        power_set_soft_poweroff();
+        // power_set_soft_poweroff();
     }
 #endif
 }

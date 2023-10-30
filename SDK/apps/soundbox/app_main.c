@@ -15,6 +15,7 @@
 #include "audio.h"
 #include "vm.h"
 #include "user_head.h"
+#include "asm/power/p33.h"
 
 
 #define LOG_TAG_CONST       APP
@@ -106,7 +107,7 @@ void app_main()
     log_info("app_main\n");
 
     app_var.start_time = timer_get_ms();
-
+    p33_tx_1byte(R3_OSL_CON,0);//695的RTC时钟会影响PB3的ad值，需要关闭掉才能正常使用
     if (get_charge_online_flag()) {
 
         app_var.poweron_charge = 1;
@@ -143,7 +144,7 @@ void app_main()
 #if (TCFG_USB_CDC_BACKGROUND_RUN && (!TCFG_PC_ENABLE))
     usb_cdc_background_run();
 #endif
-    // user_fun_init();
+    user_fun_init();
     app_task_loop();
 }
 

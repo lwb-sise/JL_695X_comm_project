@@ -8,6 +8,7 @@
 #include "app_charge.h"
 #include "chgbox_ctrl.h"
 #include "update_loader_download.h"
+#include "user_head.h"
 
 
 extern void setup_arch();
@@ -78,7 +79,8 @@ static void check_power_on_key(void)
             putchar('+');
             delay_10msp_cnt = 0;
             delay_10ms_cnt++;
-            if (delay_10ms_cnt > 70) {
+            u_maintenance_voltage_on();
+            if (delay_10ms_cnt > 50) {
                 return;
             }
         } else {
@@ -89,6 +91,7 @@ static void check_power_on_key(void)
             if (delay_10msp_cnt > 20) {
                 puts("enter softpoweroff\n");
                 power_set_soft_poweroff();
+                u_maintenance_voltage_off();
             }
         }
     }

@@ -423,7 +423,7 @@ DAC硬件上的连接方式,可选的配置：
 // 使能改宏，提示音音量使用music音量
 #define APP_AUDIO_STATE_WTONE_BY_MUSIC      (0)
 // 0:提示音不使用默认音量； 1:默认提示音音量值
-#define TONE_MODE_DEFAULE_VOLUME            (0)
+#define TONE_MODE_DEFAULE_VOLUME            (15)
 
 //AudioEffects代码链接管理
 #define AUDIO_EFFECTS_DRC_AT_RAM			0
@@ -462,7 +462,7 @@ DAC硬件上的连接方式,可选的配置：
 
 #else
 
-#define TCFG_PWMLED_ENABLE					DISABLE_THIS_MOUDLE			//是否支持PMW LED推灯模块
+#define TCFG_PWMLED_ENABLE					ENABLE_THIS_MOUDLE			//是否支持PMW LED推灯模块
 #define TCFG_PWMLED_IOMODE					LED_ONE_IO_MODE				//LED模式，单IO还是两个IO推灯
 #define TCFG_PWMLED_PIN						IO_PORTB_06					//LED使用的IO口 注意和led7是否有io冲突
 
@@ -662,7 +662,7 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 #define TCFG_AUTO_SHUT_DOWN_TIME		    (30*60)   //没有蓝牙连接自动关机时间
 #define TCFG_SYS_LVD_EN						1   //电量检测使能
-#define TCFG_POWER_ON_NEED_KEY				1	  //是否需要按按键开机配置
+#define TCFG_POWER_ON_NEED_KEY				0	  //是否需要按按键开机配置
 #define TWFG_APP_POWERON_IGNORE_DEV         0//上电忽略挂载设备，0时不忽略，非0则n毫秒忽略
 
 #define TCFG_AUDIO_DEC_OUT_TASK				0	// 解码使用单独任务做输出
@@ -673,7 +673,7 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_USER_TWS_ENABLE                1   //tws功能使能
 #define TCFG_USER_BLE_ENABLE                0   //BLE功能使能
 #define TCFG_USER_BT_CLASSIC_ENABLE         1   //经典蓝牙功能使能
-#define TCFG_BT_SUPPORT_AAC                 0   //AAC格式支持
+#define TCFG_BT_SUPPORT_AAC                 1   //AAC格式支持
 #define TCFG_USER_EMITTER_ENABLE            0   //emitter功能使能
 #define TCFG_BT_SNIFF_ENABLE                0   //bt sniff 功能使能
 
@@ -925,7 +925,7 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 #define AUDIO_SURROUND_CONFIG     0//3d环绕
 
-#define AUDIO_VBASS_CONFIG        0//虚拟低音,虚拟低音不支持四声道
+#define AUDIO_VBASS_CONFIG        1//虚拟低音,虚拟低音不支持四声道
 #define AUDIO_SPECTRUM_CONFIG     0  //频响能量值获取接口
 #define AUDIO_MIDI_CTRL_CONFIG    0  //midi电子琴接口使能
 

@@ -50,7 +50,7 @@
 
 #include "bt.h"
 #include "bt_tws.h"
-
+#include "user_head.h"
 
 #if TCFG_APP_LINEIN_EN
 
@@ -68,6 +68,39 @@ static u8 linein_last_onoff = (u8) - 1;
 static u8 linein_bt_back_flag = 0;
 static u8 linein_idle_flag = 1;
 
+#if USE_TONE_END_LINEIN_RESTART
+
+/**
+ * @brief 提示音播放结束会自动暂停音乐，这里执行播放
+ * 
+ */
+void line_tone_end_deal(void)
+{
+    r_printf("-----linein tone end,post msg to key_vol_up----\n");
+	if(APP_LINEIN_TASK == app_get_curr_task())
+	{
+        app_task_put_key_msg(KEY_VOL_UP_CLICK, 0);
+    }
+}
+
+void user_stop_linein(void)
+{
+    if(linein_last_onoff){
+        r_printf("---usr stop linein play\n");
+        linein_stop();
+    }
+}
+
+void reset_linein_play(void)
+{
+    if(linein_last_onoff)
+    {
+        r_printf("---reset linein play mode ----\n");
+        linein_start();
+    }
+}
+
+#endif
 ///*----------------------------------------------------------------------------*/
 /**@brief   当前出于非linein 模式时候linein的在common消息处理
    @param    无
@@ -133,6 +166,7 @@ static int linein_key_msg_deal(struct sys_event *event)
     case KEY_LINEIN_START:
         linein_start();
         linein_last_onoff = 1;
+        u_pa_ex_info_set(PA_LINEIN,linein_last_onoff);
         UI_REFLASH_WINDOW(true);//刷新主页并且支持打断显示
         break;
     case KEY_TEST_DEMO_0:
@@ -149,6 +183,7 @@ static int linein_key_msg_deal(struct sys_event *event)
         linein_last_onoff = linein_volume_pp();
         linein_last_onoff ? ui_update_status(STATUS_LINEIN_PLAY)\
         : ui_update_status(STATUS_LINEIN_PAUSE);
+        u_pa_ex_info_set(PA_LINEIN,linein_last_onoff);
         break;
     case  KEY_VOL_UP:
         log_info(" KEY_VOL_UP\n");
@@ -255,7 +290,13 @@ static int linein_sys_event_handler(struct sys_event *event)
                 log_info("linein online \n");
             } else if (event->u.dev.event == DEVICE_EVENT_OUT) {
                 log_info("linein offline \n");
+                linein_last_onoff=0;
+                u_pa_ex_info_set(PA_LINEIN,linein_last_onoff);
+#if USE_DEV_OUT_TO_BT
+                app_task_switch_to(APP_BT_TASK);
+#else
                 app_task_switch_next();
+#endif
             }
             return true;
         }
@@ -295,7 +336,8 @@ void app_linein_task()
     int res;
     int err = 0;
     int msg[32];
-
+    linein_last_onoff=1;
+    u_pa_ex_info_set(PA_LINEIN,linein_last_onoff);
 #if TCFG_APP_BT_EN
     linein_bt_back_flag = get_bt_back_flag();//从蓝牙后台返回标志
     set_bt_back_flag(0);

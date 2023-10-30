@@ -19,11 +19,11 @@
 /*解码任务cpu占用率跟踪*/
 #define TCFG_AUDIO_DECODER_OCCUPY_TRACE		1
 
-#if BT_SUPPORT_MUSIC_VOL_SYNC
-#define TCFG_MAX_VOL_PROMPT						 0
-#else
-#define TCFG_MAX_VOL_PROMPT						 1
-#endif
+// #if BT_SUPPORT_MUSIC_VOL_SYNC
+// #define TCFG_MAX_VOL_PROMPT						 0
+// #else
+// #define TCFG_MAX_VOL_PROMPT						 1
+// #endif
 
 /*
  *该配置适用于没有音量按键的产品，防止打开音量同步之后
@@ -96,7 +96,7 @@
 #endif
 
 
-#define SYS_DEFAULT_VOL         	0//SYS_MAX_VOL  //(SYS_MAX_VOL/2)
+#define SYS_DEFAULT_VOL         	(SYS_MAX_VOL*7/10)//SYS_MAX_VOL  //(SYS_MAX_VOL/2)
 #define SYS_DEFAULT_TONE_VOL    	18 //(SYS_MAX_VOL)
 #define SYS_DEFAULT_SIN_VOL     	17
 

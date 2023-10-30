@@ -3,7 +3,7 @@
 #include "system/includes.h"
 #include "app_config.h"
 #include "user_cfg.h"
-
+#include "user_head.h"
 #if TCFG_PWMLED_ENABLE
 
 #define LOG_TAG_CONST       UI
@@ -323,6 +323,7 @@ static int ui_normal_status_deal(u8 *status, u8 *power_status, u8 ui_mg_para)
         ui_user_mode_set(STATUS_DEMO_MODE, PWM_LED0_ON, 1);
         break;
 
+#if (!USE_SUOAI_LED_MODE)
     case STATUS_POWERON:
         log_info("[STATUS_POWERON]\n");
         ui_user_mode_set(STATUS_POWERON, PWM_LED0_ON, 0);
@@ -337,16 +338,16 @@ static int ui_normal_status_deal(u8 *status, u8 *power_status, u8 ui_mg_para)
 
         if (sys_ui_var.ui_flash_cnt) {
             if (sys_ui_var.ui_flash_cnt % 2) {
-                ui_user_mode_set(STATUS_POWEROFF, PWM_LED1_OFF, 0);
+                ui_user_mode_set(STATUS_POWEROFF, PWM_LED0_OFF, 0);
             } else {
-                ui_user_mode_set(STATUS_POWEROFF, PWM_LED1_ON, 0);
+                ui_user_mode_set(STATUS_POWEROFF, PWM_LED0_ON, 0);
             }
         }
         break;
 
     case STATUS_BT_INIT_OK:
         log_info("[STATUS_BT_INIT_OK]\n");
-        ui_user_mode_set(STATUS_BT_INIT_OK, PWM_LED0_LED1_SLOW_FLASH, 0);
+        ui_user_mode_set(STATUS_BT_INIT_OK, PWM_LED0_FAST_FLASH, 0);
         break;
 
     case STATUS_BT_SLAVE_CONN_MASTER:
@@ -355,9 +356,12 @@ static int ui_normal_status_deal(u8 *status, u8 *power_status, u8 ui_mg_para)
 
     case STATUS_BT_CONN:
         log_info("[STATUS_BT_CONN]\n");
-        ui_user_mode_set(STATUS_BT_CONN, PWM_LED0_ONE_FLASH_5S, 0);
+        ui_user_mode_set(STATUS_BT_CONN, PWM_LED0_ON, 0);
         break;
-
+    case STATUS_BT_PLAY:
+        log_info("[STATUS_BT_PLAY]\n");
+        ui_user_mode_set(STATUS_BT_PLAY, PWM_LED0_SLOW_FLASH, 0);
+        break;
     case STATUS_BT_MASTER_CONN_ONE:
         log_info("[STATUS_BT_MASTER_CONN_ONE]\n");
         ui_user_mode_set(STATUS_BT_MASTER_CONN_ONE, PWM_LED0_LED1_SLOW_FLASH, 0);
@@ -365,7 +369,7 @@ static int ui_normal_status_deal(u8 *status, u8 *power_status, u8 ui_mg_para)
 
     case STATUS_BT_DISCONN:
         log_info("[STATUS_BT_DISCONN]\n");
-        ui_user_mode_set(STATUS_BT_DISCONN, PWM_LED0_LED1_FAST_FLASH, 0);
+        ui_user_mode_set(STATUS_BT_DISCONN, PWM_LED0_FAST_FLASH, 0);
         break;
 
     case STATUS_PHONE_INCOME:
@@ -385,16 +389,28 @@ static int ui_normal_status_deal(u8 *status, u8 *power_status, u8 ui_mg_para)
 
     case STATUS_POWERON_LOWPOWER:
         log_info("[STATUS_POWERON_LOWPOWER]\n");
-        ui_user_mode_set(STATUS_POWERON_LOWPOWER, PWM_LED1_SLOW_FLASH, 0);
+        ui_user_mode_set(STATUS_POWERON_LOWPOWER, PWM_LED_NULL, 0);
         break;
 
     case STATUS_BT_TWS_CONN:
         log_info("[STATUS_BT_TWS_CONN]\n");
-        ui_user_mode_set(STATUS_BT_TWS_CONN, PWM_LED0_LED1_FAST_FLASH, 0);
+        u8 channel = 'U';
+#if TCFG_USER_TWS_ENABLE
+    	if (get_bt_tws_connect_status()) {
+        	channel = tws_api_get_local_channel();
+        	if ('L' == channel || tws_api_get_role()==TWS_ROLE_MASTER) {
+            	ui_user_mode_set(STATUS_BT_TWS_CONN, PWM_LED0_FAST_FLASH, 0);
+        	} else {
+            	ui_user_mode_set(STATUS_BT_CONN, PWM_LED0_ON, 0);
+        	}
+    	}
+#endif
         break;
     case STATUS_BT_TWS_DISCONN:
         log_info("[STATUS_BT_TWS_DISCONN]\n");
-        ui_user_mode_set(STATUS_BT_TWS_DISCONN, PWM_LED0_LED1_SLOW_FLASH, 0);
+#if TCFG_USER_TWS_ENABLE
+        ui_user_mode_set(STATUS_BT_TWS_CONN, PWM_LED0_FAST_FLASH, 0);
+#endif
         break;
     case STATUS_MUSIC_MODE:
         log_info("[STATUS_MUSIC_MODE]\n");
@@ -436,19 +452,158 @@ static int ui_normal_status_deal(u8 *status, u8 *power_status, u8 ui_mg_para)
         log_info("[STATUS_FM_MODE]\n");
         ui_user_mode_set(STATUS_FM_MODE, PWM_LED0_SLOW_FLASH, 0);
         break;
+    case STATUS_FM_PAUSE:
+        log_info("[STATUS_FM_MODE]\n");
+        ui_user_mode_set(STATUS_FM_PAUSE, PWM_LED0_ON, 0);
+        break;
+    case STATUS_FM_SCAN:
+        log_info("[STATUS_FM_SCAN]\n");
+        ui_user_mode_set(STATUS_FM_SCAN, PWM_LED0_FAST_FLASH, 0);
+        break;
     case STATUS_RECORD_MODE:
         log_info("[STATUS_RECORD_MODE]\n");
-        ui_user_mode_set(STATUS_RECORD_MODE, PWM_LED0_SLOW_FLASH, 0);
+        ui_user_mode_set(STATUS_RECORD_MODE, PWM_LED0_ON, 0);
         break;
     case STATUS_SPDIF_MODE:
         log_info("[STATUS_SPDIF_MODE]\n");
-        ui_user_mode_set(STATUS_SPDIF_MODE, PWM_LED0_SLOW_FLASH, 0);
+        ui_user_mode_set(STATUS_SPDIF_MODE, PWM_LED0_ON, 0);
         break;
     case STATUS_RTC_MODE:
         log_info("[STATUS_RTC_MODE]\n");
-        ui_user_mode_set(STATUS_RTC_MODE, PWM_LED0_SLOW_FLASH, 0);
+        ui_user_mode_set(STATUS_RTC_MODE, PWM_LED0_ON, 0);
         break;
+#else
+   case STATUS_POWERON:
+        log_info("[STATUS_POWERON]\n");
+        ui_user_mode_set(STATUS_POWERON, PWM_LED1_ON, 0);
+        break;
+    case STATUS_POWEROFF:
+        log_info("[STATUS_POWEROFF]\n");
+        if (ui_mg_para == UI_MG_CALL_USER) {
+            sys_ui_var.ui_flash_cnt = 7;
+            sys_ui_var.ui_flash_fre = 300;
+        }
 
+        if (sys_ui_var.ui_flash_cnt) {
+            if (sys_ui_var.ui_flash_cnt % 2) {
+                ui_user_mode_set(STATUS_POWEROFF, PWM_LED1_OFF, 0);
+            } else {
+                ui_user_mode_set(STATUS_POWEROFF, PWM_LED1_ON, 0);
+            }
+        }
+        break;
+    case STATUS_BT_INIT_OK:
+        log_info("[STATUS_BT_INIT_OK]\n");
+        ui_user_mode_set(STATUS_BT_INIT_OK, PWM_LED1_FAST_FLASH, 0);
+        break;
+    case STATUS_BT_SLAVE_CONN_MASTER:
+        ui_user_mode_set(STATUS_BT_SLAVE_CONN_MASTER, PWM_LED1_SLOW_FLASH, 0);
+        break;
+    case STATUS_BT_CONN:
+        log_info("[STATUS_BT_CONN]\n");
+        ui_user_mode_set(STATUS_BT_CONN, PWM_LED1_ON, 0);
+        break;
+    case STATUS_BT_PLAY:
+        log_info("[STATUS_BT_PLAY]\n");
+        ui_user_mode_set(STATUS_BT_PLAY, PWM_LED1_ON, 0);
+        break;
+    case STATUS_BT_MASTER_CONN_ONE:
+        log_info("[STATUS_BT_MASTER_CONN_ONE]\n");
+        ui_user_mode_set(STATUS_BT_MASTER_CONN_ONE, PWM_LED0_LED1_SLOW_FLASH, 0);
+        break;
+    case STATUS_BT_DISCONN:
+        log_info("[STATUS_BT_DISCONN]\n");
+        ui_user_mode_set(STATUS_BT_DISCONN, PWM_LED1_FAST_FLASH, 0);
+        break;
+    case STATUS_PHONE_INCOME:
+        log_info("[STATUS_PHONE_INCOME]\n");
+        ui_user_mode_set(STATUS_PHONE_INCOME, PWM_LED_NULL, 0);
+        break;
+    case STATUS_PHONE_OUT:
+        log_info("[STATUS_PHONE_OUT]\n");
+        ui_user_mode_set(STATUS_PHONE_OUT, PWM_LED_NULL, 0);
+        break;
+    case STATUS_PHONE_ACTIV:
+        log_info("[STATUS_PHONE_ACTIV]\n");
+        ui_user_mode_set(STATUS_PHONE_ACTIV, PWM_LED_NULL, 0);
+        break;
+    case STATUS_POWERON_LOWPOWER:
+        log_info("[STATUS_POWERON_LOWPOWER]\n");
+        ui_user_mode_set(STATUS_POWERON_LOWPOWER, PWM_LED_NULL, 0);
+        break;
+    case STATUS_BT_TWS_CONN:
+        log_info("[STATUS_BT_TWS_CONN]\n");
+        u8 channel = 'U';
+#if TCFG_USER_TWS_ENABLE
+    	if (get_bt_tws_connect_status()) {
+        	channel = tws_api_get_local_channel();
+        	if ('L' == channel || tws_api_get_role()==TWS_ROLE_MASTER) {
+            	ui_user_mode_set(STATUS_BT_TWS_CONN, PWM_LED1_FAST_FLASH, 0);
+        	} else {
+            	ui_user_mode_set(STATUS_BT_CONN, PWM_LED1_ON, 0);
+        	}
+    	}
+#endif
+        break;
+    case STATUS_BT_TWS_DISCONN:
+        log_info("[STATUS_BT_TWS_DISCONN]\n");
+#if TCFG_USER_TWS_ENABLE
+        ui_user_mode_set(STATUS_BT_TWS_CONN, PWM_LED1_FAST_FLASH, 0);
+#endif
+        break;
+    case STATUS_MUSIC_MODE:
+        log_info("[STATUS_MUSIC_MODE]\n");
+        ui_user_mode_set(STATUS_MUSIC_MODE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_MUSIC_PLAY:
+        log_info("[STATUS_MUSIC_PLAY]\n");
+        ui_user_mode_set(STATUS_MUSIC_PLAY, PWM_LED1_ON, 0);
+        break;
+    case STATUS_MUSIC_PAUSE:
+        log_info("[STATUS_MUSIC_PAUSE]\n");
+        ui_user_mode_set(STATUS_MUSIC_PAUSE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_LINEIN_MODE:
+        log_info("[STATUS_LINEIN_MODE]\n");
+        ui_user_mode_set(STATUS_LINEIN_MODE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_LINEIN_PLAY:
+        log_info("[STATUS_LINEIN_PLAY]\n");
+        ui_user_mode_set(STATUS_LINEIN_PLAY, PWM_LED1_ON, 0);
+        break;
+    case STATUS_LINEIN_PAUSE:
+        log_info("[STATUS_LINEIN_PAUSE]\n");
+        ui_user_mode_set(STATUS_LINEIN_PAUSE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_PC_MODE:
+        log_info("[STATUS_PC_MODE]\n");
+        ui_user_mode_set(STATUS_PC_MODE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_PC_PLAY:
+        log_info("[STATUS_PC_PLAY]\n");
+        ui_user_mode_set(STATUS_PC_PLAY, PWM_LED1_ON, 0);
+        break;
+    case STATUS_PC_PAUSE:
+        log_info("[STATUS_PC_PAUSE]\n");
+        ui_user_mode_set(STATUS_PC_PAUSE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_FM_MODE:
+        log_info("[STATUS_FM_MODE]\n");
+        ui_user_mode_set(STATUS_FM_MODE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_RECORD_MODE:
+        log_info("[STATUS_RECORD_MODE]\n");
+        ui_user_mode_set(STATUS_RECORD_MODE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_SPDIF_MODE:
+        log_info("[STATUS_SPDIF_MODE]\n");
+        ui_user_mode_set(STATUS_SPDIF_MODE, PWM_LED1_ON, 0);
+        break;
+    case STATUS_RTC_MODE:
+        log_info("[STATUS_RTC_MODE]\n");
+        ui_user_mode_set(STATUS_RTC_MODE, PWM_LED1_ON, 0);
+        break;
+#endif
     default:
         ret = -1;
         break;

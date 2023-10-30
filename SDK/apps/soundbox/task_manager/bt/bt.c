@@ -95,6 +95,7 @@
 #include "le_client_demo.h"
 #include "tuya_multi/tuya_le_multi_common.h"
 #include "multi_demo/le_multi_common.h"
+#include "user_head.h"
 
 
 #define LOG_TAG_CONST        BT
@@ -371,6 +372,10 @@ static void ble_client_config_init(void)
 /*----------------------------------------------------------------------------*/
 void bt_function_select_init()
 {
+#if USER_SHOW_BAT_NOT_PHONE
+    extern void __set_disable_sco_flag(bool flag);
+    __set_disable_sco_flag(1);
+#endif
     set_idle_period_slot(1600);
     ////设置协议栈支持设备数
     __set_user_ctrl_conn_num(TCFG_BD_NUM);
@@ -939,6 +944,12 @@ int bt_key_event_handler(struct sys_event *event)
         break;
     case  KEY_CALL_HANG_UP:
         log_info("    KEY_CALL_HANG_UP \n");
+#if USE_SCO_LINK
+        user_send_cmd_prepare(USER_CTRL_SCO_LINK, 0, NULL);
+#endif
+#if USE_HANGUP_KEY_FOR_TWS_PAIR
+        bt_tws_search_or_remove_pair();
+#endif
         bt_key_call_hand_up();
         break;
     case  KEY_CALL_ANSWER:

@@ -37,6 +37,7 @@
 #include "ui_manage.h"
 #include "soundbox.h"
 #include "bt_emitter.h"
+#include "user_head.h"
 
 #define LOG_TAG_CONST       APP_ACTION
 #define LOG_TAG             "[APP_ACTION]"
@@ -80,7 +81,7 @@ static void input_number_deal(u32 num)
     UI_SHOW_MENU(MENU_FILENUM, 4 * 1000, input_number, NULL);
 }
 
-
+u8 flag_vol_hold_press=0;
 int app_common_key_msg_deal(struct sys_event *event)
 {
     int ret = false;
@@ -180,8 +181,35 @@ int app_common_key_msg_deal(struct sys_event *event)
 #endif//TWFG_APP_POWERON_IGNORE_DEV
 
         {
-            printf("KEY_CHANGE_MODE\n");
-            app_task_switch_next();
+#if DEV_SD_AND_USB_MODE_CHANGE
+    		if(APP_MUSIC_TASK == app_get_curr_task())
+			{
+        		if(dev_manager_get_total(1) > 1)
+				{
+            		if(flag_music_can_exit==0)
+					{
+                		r_printf("---cur is music task,dev > 1,sw to next dev----\n");
+                		app_task_put_key_msg(KEY_MUSIC_CHANGE_DEV, 0);
+            		}
+					else
+					{
+                		flag_music_can_exit = 0;
+                		g_printf("---dev sw over,sw task mode----\n");
+                        app_task_switch_next();
+            		}
+        		}
+				else
+				{
+            		r_printf("---cur is music task ,but dev <= 1,sw to next task mode---\n");
+            		app_task_switch_next();
+        		}
+    		}
+			else
+#endif//   DEV_SD_AND_USB_MODE_CHANGE         
+            {
+                printf("KEY_CHANGE_MODE\n");
+                app_task_switch_next();
+            }
         }
         break;
 
@@ -194,7 +222,8 @@ int app_common_key_msg_deal(struct sys_event *event)
         if (app_audio_get_volume(APP_AUDIO_CURRENT_STATE) == app_audio_get_max_volume()) {
             if (tone_get_status() == 0) {
 #if TCFG_MAX_VOL_PROMPT
-                tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 0);
+                flag_vol_hold_press = 1;
+                tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 1);
 #endif
             }
         }
@@ -209,17 +238,99 @@ int app_common_key_msg_deal(struct sys_event *event)
         log_info("COMMON KEY_VOL_DOWN\n");
         app_audio_volume_down(1);
         printf("common vol-: %d", app_audio_get_volume(APP_AUDIO_CURRENT_STATE));
+#if TCFG_MIN_VOL_PROMPT 
+        if (app_audio_get_volume(APP_AUDIO_CURRENT_STATE) <= 0) {
+            if (tone_get_status() == 0) {
+                flag_vol_hold_press = 1;
+                tone_play_by_path(TONE_MIN_VOL, 1);
+            }
+        }
+#endif //TCFG_MIN_VOL_PROMPT
 #if (TCFG_DEC2TWS_ENABLE)
         bt_tws_sync_volume();
 #endif
         UI_SHOW_MENU(MENU_MAIN_VOL, 1000, app_audio_get_volume(APP_AUDIO_CURRENT_STATE), NULL);
         break;
-
+    case KEY_VOL_UP_CLICK:
+        r_printf("---KEY_VOL_UP_CLICK----\n");
+        if(flag_vol_hold_press==1){
+            flag_vol_hold_press = 0;
+			if(tone_get_status())
+			{
+				tone_play_stop();
+			}
+        }
+#if TCFG_APP_LINEIN_EN
+        if(app_get_curr_task() == APP_LINEIN_TASK){
+            extern void reset_linein_play(void);
+            reset_linein_play();
+        }
+#endif // TCFG_APP_LINEIN_EN
+        break;
     case  KEY_EQ_MODE:
 #if(TCFG_EQ_ENABLE == 1)
         eq_mode_sw();
 #endif
         break;
+        case KEY_USER_CONN_OR_DISCONN://手动连接断开
+        g_printf("KEY_USER_CONN_OR_DISCONN %d",tws_api_get_role());
+        if(!(tws_api_get_role() == TWS_ROLE_SLAVE) ){
+            if ((BT_STATUS_CONNECTING == get_bt_connect_status())   ||
+            (BT_STATUS_TAKEING_PHONE == get_bt_connect_status()) ||
+            (BT_STATUS_PLAYING_MUSIC == get_bt_connect_status())) { /*连接状态*/
+            puts("------------0-------------bt_disconnect\n");/*手动断开连接*/
+                user_send_cmd_prepare(USER_CTRL_DISCONNECTION_HCI, 0, NULL);
+            }else{
+                puts("------------1-------------bt_connect\n");/*手动连接*/
+                #if TCFG_USER_TWS_ENABLE
+                    extern void bt_tws_delete_pair_timer(void);
+                    bt_tws_delete_pair_timer();
+                    bt_close_tws_wait_pair();
+                    bt_close_phone_wait_pair();
+                    bt_close_tws_conn();
+                #endif
+                user_send_cmd_prepare(USER_CTRL_START_CONNEC_VIA_ADDR_MANUALLY, 0, NULL);
+            }
+        }
+    break;
+        //===================彩灯====================
+        case KEY_RGB_SW:
+        r_printf("---KEY_RGB_SW---\n");
+#ifdef U_RGB_MODE_EN
+        //****关灯状态单击 恢复默认亮灯灯效****
+        if (light_off){
+            reback_light=1;
+            light_off=0;
+            user_rgb_mode_set(E_RGB_MODE_1);
+            break;
+        }
+         //****切换灯效****
+        user_rgb.rgb_cur_work_mode = get_user_rgb_work_mode();
+        user_rgb.rgb_cur_work_mode++;
+
+        if(user_rgb.rgb_cur_work_mode >= user_rgb.rgb_led_work_max){
+            user_rgb.rgb_cur_work_mode = E_RGB_MODE_0;
+        }
+		
+        user_rgb_mode_set(user_rgb.rgb_cur_work_mode);
+#endif 
+        break;
+
+    case KEY_RGB_ON_OFF:
+        r_printf("---KEY_RGB_ON_OFF---\n");
+#ifdef U_RGB_MODE_EN
+
+        if (!light_off)
+        {
+            light_off=1;
+        }else{
+            reback_light=1;
+            light_off=0;
+            user_rgb_mode_set(E_RGB_MODE_1);        
+        }
+        
+#endif
+        break; 
 #if (AUDIO_OUTPUT_WAY == AUDIO_OUTPUT_WAY_BT)
 
 
@@ -317,9 +428,37 @@ int app_power_user_event_handler(struct device_event *dev)
 #if(TCFG_SYS_LVD_EN == 1)
     switch (dev->event) {
     case POWER_EVENT_POWER_WARNING:
-        ui_update_status(STATUS_LOWPOWER);
-        tone_play_by_path(tone_table[IDEX_TONE_LOW_POWER], 1);
+#if DEV_ONLINE_BK_POWERON_TONE
+        if (status_power_on)
+        {//为了防止开机提示音给低电提示音打断
+            ui_update_status(STATUS_LOWPOWER);
+            tone_play_by_path(tone_table[IDEX_TONE_LOW_POWER], 1);
+            #if BAT_LOW_TO_POWER_OFF_TIMES
+                static u8 low_waring_times = 0;
+                printf("----low_waring_times==%d-----",low_waring_times);
+                if (low_waring_times == BAT_LOW_TO_POWER_OFF_TIMES)
+                {
+                    low_power_off_deal();
+                }
+                low_waring_times++;
+            #endif
+        }
+		break;
+#endif
         /* return 0; */
+     case POWER_EVENT_LOW_POWER_OFF:
+        log_info("[POWER_EVENT_LOW_POWER_OFF]\n");
+        if (!tone_get_status())
+        {
+            int err =  tone_play_with_callback_by_name(tone_table[IDEX_TONE_LOW_POWER], 1, low_power_off_deal, (void *)NULL);
+            log_info("err==%d",err);
+            if (err)
+            {
+                low_power_off_deal();
+            }  
+        }
+ 
+        break;
     }
 #if (SOUNDCARD_ENABLE)
     soundcard_power_event(dev);
@@ -400,6 +539,62 @@ static void app_common_device_event_handler(struct sys_event *event)
     case DRIVER_EVENT_FROM_SD2:
 #if TCFG_APP_MUSIC_EN
         ret = dev_status_event_filter(event);///解码设备上下线， 设备挂载等处理
+#if DEV_ONLINE_BK_POWERON_TONE 
+        if (app_get_curr_task() != APP_MUSIC_TASK) {
+            r_printf("---dev online ,not in the music task---\n");
+            if(ret == true){
+                if((u32)event->arg == DEVICE_EVENT_FROM_OTG){
+                    g_printf("---mount the usb to music--\n");
+                }else{
+                    g_printf("---mount the sd to music---\n");
+                }
+            }
+        }
+        if(status_power_on == 0) {    //防止开机提示音被打断
+            r_printf("---DEV online ,aomunt DEV---\n");
+            if((u32)event->arg == DEVICE_EVENT_FROM_OTG)
+            {
+                if(ret == true) 
+                {
+                    if(event->u.dev.event == DEVICE_EVENT_IN)
+                    {
+                        r_printf("----usb dev online ,amount usb-----\n");
+                        flag_Dev_online |= BIT(E_DEV_USB_ONLINE);
+                        return;
+                    } else if(event->u.dev.event == DEVICE_EVENT_OUT) 
+                    {
+                        r_printf("----usb dev online ,amount usb-----\n");
+                        flag_Dev_online &= ~BIT(E_DEV_USB_ONLINE);
+                        return;
+                    }
+                } else {
+                    r_printf("----usb dev online ,amount usb-----\n");
+                    flag_Dev_online &= ~BIT(E_DEV_USB_ONLINE);
+                    return;
+                }
+            } 
+            else 
+            {
+                if(ret == true) 
+                {
+                    if(event->u.dev.event == DEVICE_EVENT_IN) {
+                        r_printf("----sd dev online ,amount sd-----\n");
+                        flag_Dev_online |= BIT(E_DEV_SD_ONLINE);
+                        return;
+                    } else 
+                    {
+                        r_printf("----sd dev online ,amount sd-----\n");
+                        flag_Dev_online &= ~BIT(E_DEV_SD_ONLINE);
+                        return;
+                    }
+                } else {
+                    r_printf("----sd dev online ,amount sd-----\n");
+                    flag_Dev_online &= ~BIT(E_DEV_SD_ONLINE);
+                    return;
+                }
+            }
+        }
+#endif // DEV_ONLINE_BK_POWERON_TONE        
         if (ret == true) {
             if (event->u.dev.event == DEVICE_EVENT_IN) {
                 ///设备上线， 非解码模式切换到解码模式播放
@@ -414,7 +609,18 @@ static void app_common_device_event_handler(struct sys_event *event)
 #if TCFG_APP_LINEIN_EN
     case DEVICE_EVENT_FROM_LINEIN:
         ret = linein_device_event_handler(event);
+#if DEV_ONLINE_BK_POWERON_TONE
+        if(status_power_on == 0){//防止开机提示音被打断
+            r_printf("----linein dev online ,amount linein-----\n");
+            flag_Dev_online |= BIT(E_DEV_AUX_ONLINE);
+            break;
+        }
+#endif//DEV_ONLINE_BK_POWERON_TONE
         if (ret == true) {
+#if USE_FM_LINEIN_MODE_AUTO_CHANGE
+            if (app_check_curr_task(APP_FM_TASK))break;
+            else
+#endif//USE_FM_LINEIN_MODE_AUTO_CHANGE
             app = APP_LINEIN_TASK;
         }
         break;

@@ -53,6 +53,7 @@
 #include "audio_dec.h"
 #include "tone_player.h"
 #include "dac.h"
+#include "user_head.h"
 
 
 #define __this 	(&app_bt_hdl)
@@ -170,7 +171,11 @@ void volume_up(void)
 #endif
         {
 #if TCFG_MAX_VOL_PROMPT
-            tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 0);
+            if (tone_get_status() == 0) {
+                flag_vol_hold_press = 1;
+                printf("----play bt max vol ----\n");
+                tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 1);
+            }
 #endif
         }
 
@@ -264,6 +269,13 @@ void volume_down(void)
     }
 
     if (app_audio_get_volume(APP_AUDIO_CURRENT_STATE) <= 0) {
+#if TCFG_MIN_VOL_PROMPT
+        if (tone_get_status() == 0) {
+            r_printf("----play bt min vol ----\n");
+            flag_vol_hold_press = 1;
+            tone_play_by_path(TONE_MIN_VOL, 1);
+        }
+#endif         
         if (get_call_status() != BT_CALL_HANGUP) {
             /*
              *本地音量最小，如果手机音量还没最小，继续减

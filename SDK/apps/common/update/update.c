@@ -29,6 +29,7 @@
 #include "custom_cfg.h"
 
 #include "update_tws.h"
+#include "user_head.h"
 
 
 #define LOG_TAG "[APP-UPDATE]"
@@ -189,7 +190,10 @@ int update_result_deal()
         led_update_finish();
 #endif
     }
-
+    //-------开启电源维持----------
+    u_maintenance_voltage_init();
+    //-------开启功放----------
+    u_pa_control(PA_UPDATE);
     extern u8 get_max_sys_vol(void);
     while (1) {
         wdt_clear();
@@ -220,6 +224,9 @@ int update_result_deal()
             key_voice_cnt = 0;
             //delay_2ms(500);
             //os_time_dly(100);
+            //-------关闭功放----------
+            u_pa_control(PA_POWER_OFF_SOFT);
+            os_time_dly(20);
             puts("enter_sys_soft_poweroff\n");
             break;
             //注:关机要慎重,要设置开机键

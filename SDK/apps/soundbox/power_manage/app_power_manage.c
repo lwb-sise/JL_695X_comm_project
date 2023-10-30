@@ -11,6 +11,7 @@
 #include "user_cfg.h"
 #include "bt.h"
 #include "asm/charge.h"
+#include "user_head.h"
 
 #if TCFG_USER_TWS_ENABLE
 #include "bt_tws.h"
@@ -212,7 +213,7 @@ int app_power_event_handler(struct device_event *dev)
 u16 get_vbat_level(void)
 {
     //return 370;     //debug
-    return (adc_get_voltage(AD_CH_VBAT) * 4 / 10);
+    return u_get_vbat(adc_get_voltage(AD_CH_VBAT) * 4 / 10);
 }
 
 __attribute__((weak)) u8 remap_calculate_vbat_percent(u16 bat_val)
@@ -264,13 +265,34 @@ u8  battery_value_to_phone_level(u16 bat_val)
 {
     u8  battery_level = 0;
     u8 vbat_percent = get_vbat_percent();
-
+#if USER_BAT_LEVEL_SHOW
+    if(get_vbat_value()>=400) 
+           battery_level=9;  //100%
+    else if(get_vbat_value()>=395)
+        battery_level=8;           //90%
+    else if(get_vbat_value()>=390)
+        battery_level=7;           //80%
+    else if(get_vbat_value()>=385)
+        battery_level=6;           //70%
+    else if(get_vbat_value()>=380)
+        battery_level=5;           //60%
+    else if(get_vbat_value()>=375)
+        battery_level=4;           //50%
+    else if(get_vbat_value()>=370)
+        battery_level=3;           //40%
+    else if(get_vbat_value()>=365)
+        battery_level=2;           //30%
+    else if(get_vbat_value()>=345)
+        battery_level=1;           //20% 345-365
+    else
+        battery_level=0;    //10%  小于345
+#else
     if (vbat_percent < 5) { //小于5%电量等级为0，显示10%
         return 0;
     }
 
     battery_level = (vbat_percent - 5) / 10;
-
+#endif
     return battery_level;
 }
 
@@ -342,6 +364,20 @@ void vbat_timer_delete(void)
     }
 }
 
+/**
+ * @brief 低电关机
+ * 
+ */
+void low_power_off_deal(){
+    log_info("[%s]",__func__);
+    power_event_to_user(POWER_EVENT_POWER_LOW);
+}
+#if USE_SUOAI_RGB_MODE
+u8 low_bat_change_rgb=0;
+#endif
+#if BAT_LED_SHOW
+extern volatile u8 led_status;
+#endif
 void vbat_check(void *priv)
 {
     static u8 unit_cnt = 0;
@@ -353,13 +389,57 @@ void vbat_check(void *priv)
     static u8 charge_ccvol_v_cnt = 0;
     static u8 charge_online_flag = 0;
     static u8 low_voice_first_flag = 1;//进入低电后先提醒一次
-
+#if (BAT_VAL_CNT==0)
     if (!bat_val) {
         bat_val = get_vbat_level();
     } else {
         bat_val = (get_vbat_level() + bat_val) / 2;
     }
+#else
+    u16 bat_val_temp;//电量对比tmp
+    static u8 bat_val_cnt=8;
+    bat_val_temp = get_vbat_level();
+    if(bat_val!=bat_val_temp)
+    {
+        bat_val_cnt++;
+        if(bat_val_cnt>=BAT_VAL_CNT)
+        {
+            bat_val_cnt=0;	
+            bat_val=bat_val_temp;		
+            printf("bv:%d\n", bat_val);
 
+        }
+    }else{
+        bat_val_cnt=0;
+    }
+#endif
+
+#if USE_SUOAI_RGB_MODE
+    static u16 flash_cnt=0;
+    static u16 flash_recover=0;
+    if (bat_val<=345)
+    {
+        flash_cnt++;
+        flash_recover=0;
+    }else{
+        flash_cnt=0;
+        flash_recover++;
+    }
+    if (flash_cnt>=60)
+    {
+        flash_cnt=0;
+        if (!low_bat_change_rgb)
+        {
+            low_bat_change_rgb=1;
+            // app_audio_set_volume(APP_AUDIO_STATE_MUSIC,(int)(SYS_MAX_VOL*((float)0.7)), 1);
+        }
+    }
+    if (flash_recover>=90)
+    {
+        low_bat_change_rgb=0;
+        flash_recover = 0;
+    }
+#endif
     cur_battery_level = battery_value_to_phone_level(bat_val);
 
     //printf("bv:%d, bl:%d , check_vbat:%d\n", bat_val, cur_battery_level, adc_check_vbat_lowpower());
@@ -392,9 +472,17 @@ void vbat_check(void *priv)
                 cur_bat_st = VBAT_LOWPOWER;
                 if (low_power_cnt > 6) {
                     log_info("\n*******Low Power,enter softpoweroff********\n");
-
-                    low_power_cnt = 0;
+#if USE_SUOAI_RGB_MODE
+                    low_bat_change_rgb=1;
+#endif
+#if BAT_LOW_POWER_OFF_PLAY_TONE
+                    log_info("----%d----",__LINE__);
+                    power_event_to_user(POWER_EVENT_LOW_POWER_OFF);
+#else
+                    log_info("----%d----",__LINE__);
                     power_event_to_user(POWER_EVENT_POWER_LOW);
+#endif
+                    low_power_cnt = 0;
                     usr_timer_del(vbat_fast_timer);
                     vbat_fast_timer = 0;
                 }
@@ -409,6 +497,9 @@ void vbat_check(void *priv)
                     low_voice_cnt = 0;
                     if (!lowpower_timer) {
                         log_info("\n**Low Power,Please Charge Soon!!!**\n");
+#if USE_SUOAI_RGB_MODE
+                        low_bat_change_rgb=1;
+#endif
                         power_event_to_user(POWER_EVENT_POWER_WARNING);
                     }
                 }
@@ -437,21 +528,35 @@ void vbat_check(void *priv)
         low_off_cnt = 0;
         low_warn_cnt = 0;
         charge_ccvol_v_cnt = 0;
-
+#if BAT_PHONE_VAL_CNT
+        static u8 phone_bat_dif_cnt=0;
+#endif
         if (cur_bat_st != VBAT_LOWPOWER) {
             usr_timer_del(vbat_fast_timer);
             vbat_fast_timer = 0;
             cur_battery_level = battery_value_to_phone_level(bat_val);
             if (cur_battery_level != old_battery_level) {
+#if (!BAT_PHONE_VAL_CNT)
                 power_event_to_user(POWER_EVENT_POWER_CHANGE);
+#endif
             } else {
                 if (charge_online_flag != get_charge_online_flag()) {
                     //充电变化也要交换，确定是否在充电仓
                     power_event_to_user(POWER_EVENT_POWER_CHANGE);
                 }
             }
-            charge_online_flag =  get_charge_online_flag();
-            old_battery_level = cur_battery_level;
+#if BAT_PHONE_VAL_CNT
+            if (phone_bat_dif_cnt>BAT_PHONE_VAL_CNT)//30s持续电量不同则切换手机电量值
+            {
+                charge_online_flag =  get_charge_online_flag();
+                old_battery_level = cur_battery_level;
+                power_event_to_user(POWER_EVENT_POWER_CHANGE);
+                phone_bat_dif_cnt=0;
+            }
+#else
+                charge_online_flag =  get_charge_online_flag();
+                old_battery_level = cur_battery_level;
+#endif
         }
     }
 }
@@ -476,7 +581,11 @@ void check_power_on_voltage(void)
         if ((val < app_var.poweroff_tone_v) || adc_check_vbat_lowpower()) {
             low_power_cnt++;
             normal_power_cnt = 0;
+#ifdef U_VBAT_MODE_EN
+            if (low_power_cnt > 30) {
+#else
             if (low_power_cnt > 10) {
+#endif
                 ui_update_status(STATUS_POWERON_LOWPOWER);
                 os_time_dly(100);
                 log_info("power on low power , enter softpoweroff!\n");

@@ -62,6 +62,10 @@ flac_decoder
 
 ape_decoder
 wtgv2_decoder
+
+
+
+aac_decoder
 wav_decoder
 cvsd_encoder
 

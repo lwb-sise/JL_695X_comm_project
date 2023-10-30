@@ -160,6 +160,10 @@ flac_decoder
 
 ape_decoder
 wtgv2_decoder
+
+
+
+aac_decoder
 wav_decoder
 cvsd_encoder
 
@@ -1671,7 +1675,7 @@ SECTIONS
         acl_tx_pool = .;
         *(.bredr_tx_bulk)
 
-        acl_tx_pool_end = acl_tx_pool + (3 * 1024);
+        acl_tx_pool_end = acl_tx_pool + (4 * 1024);
 
 
 

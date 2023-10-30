@@ -65,6 +65,7 @@ static void connect_and_connectable_switch(void *_sw)
 
 #include "bt_common.h"
 #include "soundbox.h"
+#include "user_head.h"
 
 #if TCFG_APP_BT_EN
 
@@ -541,7 +542,7 @@ int bt_tws_sync_phone_num(void *priv)
 }
 
 
-static void bt_tws_delete_pair_timer()
+void bt_tws_delete_pair_timer()
 {
     if (gtws.pair_timer) {
         sys_timeout_del(gtws.pair_timer);
@@ -799,6 +800,33 @@ int bt_tws_start_search_and_pair()
         return 0;
     }
 
+#if USER_TWS_PARING_EVERY_CLICK    
+    int err;
+    u8 addr[6];
+    extern void bt_tws_remove_pairs();
+
+    err = tws_get_sibling_addr(addr);
+    if (err==0) {
+
+     
+     printf("------------err==%d---------------\n",err);
+
+        printf(">>>>>>>>>>>>>> has paired!!!!!! >>>>>>>>>>>>>>\n");
+        printf(">>>>>>>>>>>>>> tws_api_get_role() ==%d >>>>>>>>>>>>\n");
+        if(!(tws_api_get_role() == TWS_ROLE_SLAVE) ){
+            user_send_cmd_prepare(USER_CTRL_TWS_DISCONNECTION_HCI, 0, NULL);
+            user_send_cmd_prepare(USER_CTRL_TWS_CLEAR_INFO, 0, NULL);
+            // USER_CTRL_DEL_ALL_REMOTE_INFO
+            tws_remove_tws_pairs();       
+            bt_tws_remove_pairs();
+        }
+    }
+    if (tws_get_sibling_addr(addr)!=0)
+    {//重置可配对状态
+        gtws.state |= BT_TWS_UNPAIRED;
+    }
+#endif 
+
 #if CONFIG_TWS_USE_COMMMON_ADDR
     if (tws_api_get_tws_state() & TWS_STA_PHONE_CONNECTED) {
         return 0;
@@ -877,7 +905,7 @@ void  bt_tws_search_or_remove_pair()
     if (bt_tws_remove_tws_pair()) {
         return;
     }
-
+    tone_play_by_path(TONE_TWS_START, 1);
     bt_tws_start_search_and_pair();
 }
 
@@ -2646,7 +2674,7 @@ static void tws_event_cmd_max_vol()
 {
 
 #if TCFG_MAX_VOL_PROMPT
-    tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 0);
+    tone_play_by_path(tone_table[IDEX_TONE_MAX_VOL], 1);
 #endif
 }
 

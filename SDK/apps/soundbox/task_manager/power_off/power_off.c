@@ -28,7 +28,7 @@
 #include "user_cfg.h"
 #include "bt_tws.h"
 #include "bt.h"
-// #include "user_head.h"
+#include "user_head.h"
 
 #define LOG_TAG_CONST       APP_ACTION
 #define LOG_TAG             "[APP_ACTION]"
@@ -78,13 +78,17 @@ void power_off_deal(struct sys_event *event, u8 step)
                 if ((get_call_status() == BT_CALL_INCOMING) ||
                     (get_call_status() == BT_CALL_OUTGOING)) {
                     log_info("key call reject\n");
-                    /* user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL); */
+#if USE_CALL_POWER_KEY
+                     user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL); 
+#endif
                     goto_poweroff_first_flag = 0;
                     goto_poweroff_flag = 0;
                     break;
                 } else if (get_call_status() == BT_CALL_ACTIVE) {
                     log_info("key call hangup\n");
-                    /* user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL); */
+#if USE_CALL_POWER_KEY
+                     user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL); 
+#endif
                     goto_poweroff_first_flag = 0;
                     goto_poweroff_flag = 0;
                     break;
@@ -188,11 +192,13 @@ __retry:
 #endif
 #endif
 }
-
+void delay_power_off(){
+    power_set_soft_poweroff();
+}
 static void poweroff_done(void)
 {
     poweroff_wait_ui();//等待关机显示完毕
-    // user_fun_exit();
+    user_fun_exit();
     while (get_ui_busy_status()) {
     }
 #if (TCFG_CHARGE_ENABLE && TCFG_CHARGE_POWERON_ENABLE)
@@ -203,7 +209,8 @@ static void poweroff_done(void)
         power_set_soft_poweroff();
     }
 #else
-    power_set_soft_poweroff();
+    // power_set_soft_poweroff();
+    sys_timeout_add(NULL,delay_power_off,800);
 #endif
 }
 
