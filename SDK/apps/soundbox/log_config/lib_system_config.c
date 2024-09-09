@@ -45,6 +45,7 @@ const int VIRFAT_FLASH_ENABLE = 1;
 #else
 const int VIRFAT_FLASH_ENABLE = 0;
 #endif
+const int FILT_0SIZE_ENABLE = 1; //是否过滤0大小文件
 
 //================================================//
 //                  dev使用异步读使能             //

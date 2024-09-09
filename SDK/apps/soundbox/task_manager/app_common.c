@@ -298,6 +298,12 @@ int app_common_key_msg_deal(struct sys_event *event)
         r_printf("---KEY_RGB_SW---\n");
 #ifdef U_RGB_MODE_EN
         //****关灯状态单击 恢复默认亮灯灯效****
+        #if !M_USER_RGB_FM_EN
+            if (user_rgb.fm_flag)
+            {
+                break;
+            }
+        #endif
         if (light_off){
             reback_light=1;
             light_off=0;
@@ -319,7 +325,12 @@ int app_common_key_msg_deal(struct sys_event *event)
     case KEY_RGB_ON_OFF:
         r_printf("---KEY_RGB_ON_OFF---\n");
 #ifdef U_RGB_MODE_EN
-
+        #if !M_USER_RGB_FM_EN
+            if (user_rgb.fm_flag)
+            {
+                break;
+            }
+        #endif
         if (!light_off)
         {
             light_off=1;
@@ -560,17 +571,17 @@ static void app_common_device_event_handler(struct sys_event *event)
                     {
                         r_printf("----usb dev online ,amount usb-----\n");
                         flag_Dev_online |= BIT(E_DEV_USB_ONLINE);
-                        return;
+                        break;
                     } else if(event->u.dev.event == DEVICE_EVENT_OUT) 
                     {
                         r_printf("----usb dev online ,amount usb-----\n");
                         flag_Dev_online &= ~BIT(E_DEV_USB_ONLINE);
-                        return;
+                        break;
                     }
                 } else {
                     r_printf("----usb dev online ,amount usb-----\n");
                     flag_Dev_online &= ~BIT(E_DEV_USB_ONLINE);
-                    return;
+                    break;
                 }
             } 
             else 
@@ -580,17 +591,17 @@ static void app_common_device_event_handler(struct sys_event *event)
                     if(event->u.dev.event == DEVICE_EVENT_IN) {
                         r_printf("----sd dev online ,amount sd-----\n");
                         flag_Dev_online |= BIT(E_DEV_SD_ONLINE);
-                        return;
+                        break;
                     } else 
                     {
                         r_printf("----sd dev online ,amount sd-----\n");
                         flag_Dev_online &= ~BIT(E_DEV_SD_ONLINE);
-                        return;
+                        break;
                     }
                 } else {
                     r_printf("----sd dev online ,amount sd-----\n");
                     flag_Dev_online &= ~BIT(E_DEV_SD_ONLINE);
-                    return;
+                    break;
                 }
             }
         }

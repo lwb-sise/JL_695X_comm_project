@@ -59,6 +59,26 @@ void u_pa_port_init(){
             info_pa.gpio_s_off=USER_GPIO_OUT_L;    //off功放io口状态
             if(info_pa.umute_to_abd_en)info_pa.io.abd=info_pa.io.mute;
             break;
+        case LTK_5302:
+            //LTK_5302    有AB/D独立控制脚位并且串在mute脚 切AB类的时候的电平需要控制在1.2-1.6v(输入上拉)，D类>2.3v
+            info_pa.umute_to_abd_en=false;  //umute 是否复用mute脚去控制AB/D类
+            info_pa.gpio_s_mute=USER_GPIO_OUT_L;   //mute功放io口状态
+            info_pa.gpio_s_umute =USER_GPIO_OUT_H; //unmute功放io口状态 
+            info_pa.gpio_s_ab=USER_GPIO_OUT_L;    //ab功放io口状态  一端接MUTE脚，设AB类则输出低与MUTE的高电平 分压到vddio/2
+            info_pa.gpio_s_d=USER_GPIO_OUT_H;  //d功放io口状态  一端接MUTE脚,设置为输入或者输出高都可以
+            info_pa.gpio_s_off=USER_GPIO_OUT_L;    //off功放io口状态
+            if(info_pa.umute_to_abd_en)info_pa.io.abd=info_pa.io.mute;
+            break;
+        case CS_8509:
+            //CS_8679E    有AB/D独立控制脚位 切AB类的时候的低电平，D类>2.3v
+            info_pa.umute_to_abd_en=false;  //umute 是否复用mute脚去控制AB/D类
+            info_pa.gpio_s_mute=USER_GPIO_OUT_L;   //mute功放io口状态
+            info_pa.gpio_s_umute =USER_GPIO_OUT_H; //unmute功放io口状态 
+            info_pa.gpio_s_ab=USER_GPIO_OUT_L;    //ab功放io口状态
+            info_pa.gpio_s_d=USER_GPIO_OUT_H;  //d功放io口状态
+            info_pa.gpio_s_off=USER_GPIO_OUT_L;    //off功放io口状态
+            if(info_pa.umute_to_abd_en)info_pa.io.abd=info_pa.io.mute;
+            break;
         case CS_8679E:
         //CS_8679E    有AB/D独立控制脚位 切AB类的时候的电平需要控制在1.2-1.6v(输入上拉)，D类>2.3v
             info_pa.umute_to_abd_en=false;  //umute 是否复用mute脚去控制AB/D类

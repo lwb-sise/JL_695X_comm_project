@@ -63,15 +63,16 @@
 #define MIX_2018                5
 #define MIX_2917                6
 #define CS_83702E               7
-#define CS_8679E                8
-#define CS_83705                9
-#define CS_8376                 10
-#define CS_38300E               11
-#define HT_4831                 12
-#define HT_4832                 13
-#define HT_8731                 14
-#define HT_326                  15
-#define PA_DRIVE_MAX            16
+#define CS_8509                 8
+#define CS_8679E                9
+#define CS_83705                10
+#define CS_8376                 11
+#define CS_38300E               12
+#define HT_4831                 13
+#define HT_4832                 14
+#define HT_8731                 15
+#define HT_326                  16
+#define PA_DRIVE_MAX            17
 
 /*********LAMP***********/
 /***MODE_SPE****/

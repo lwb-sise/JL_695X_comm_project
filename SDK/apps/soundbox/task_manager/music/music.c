@@ -694,7 +694,20 @@ static int music_key_event_opr(struct sys_event *event)
     case  KEY_MUSIC_CHANGE_DEV:
         log_i("KEY_MUSIC_CHANGE_DEV\n");
 #if DEV_SD_AND_USB_MODE_CHANGE
-        flag_music_can_exit=1;
+        static u8 change_cnt=0;
+        if(dev_manager_get_total(1) > 2){
+            change_cnt++;
+            if (change_cnt == 2)
+            {
+                flag_music_can_exit=1;
+                change_cnt =0;
+            }
+            
+        }else{
+            change_cnt =0;
+            flag_music_can_exit=1;
+        }
+        
 #endif        
         auto_next_dev = ((msg[0] == KEY_MUSIC_AUTO_NEXT_DEV) ? 1 : 0);
         logo = music_player_get_dev_next(auto_next_dev);

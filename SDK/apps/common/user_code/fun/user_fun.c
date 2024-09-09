@@ -31,11 +31,14 @@ void user_fun_init(void){
     //关闭消人声     
     user_vocal_remove_dis();
 #endif
+#ifdef U_RGB_MODE_EN
     //炫彩灯初始化
     user_rgb_init();
-
+#endif
     //串口初始化
+#ifdef U_SERIAL_MODE_EN
     u_serial_init();
+#endif
 #if BAT_LED_SHOW
     //外部电量指示灯中断初始化
     timer0_init();
@@ -52,12 +55,13 @@ void user_fun_init(void){
  */
 void user_fun_exit(){
 
+#ifdef U_RGB_MODE_EN
     if (!light_off)
     {
         light_off=1;//关闭rgb灯
     }
     user_rgb_deal();
-
+#endif
     u_pa_automute_off();//关闭功放
 
     

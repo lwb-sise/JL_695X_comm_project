@@ -118,7 +118,7 @@
 #define     SD_CMD_DECT 	0
 #define     SD_CLK_DECT  	1
 #define     SD_IO_DECT 		2
-#define TCFG_SD0_ENABLE						ENABLE_THIS_MOUDLE
+#define TCFG_SD0_ENABLE						DISABLE_THIS_MOUDLE
 //A组IO: CMD:PA9    CLK:PA10   DAT0:PA5    DAT1:PA6    DAT2:PA7    DAT3:PA8
 //B组IO: CMD:PB10   CLK:PB9    DAT0:PB8    DAT1:PB6    DAT2:PB5    DAT3:PB4
 #define TCFG_SD0_PORTS						'B'
@@ -128,7 +128,7 @@
 #define TCFG_SD0_DET_IO_LEVEL				0//IO检查，0：低电平检测到卡。 1：高电平(外部电源)检测到卡。 2：高电平(SD卡电源)检测到卡。
 #define TCFG_SD0_CLK						(3000000*4L)
 
-#define TCFG_SD1_ENABLE						DISABLE_THIS_MOUDLE
+#define TCFG_SD1_ENABLE						ENABLE_THIS_MOUDLE
 //A组IO: CMD:PC4    CLK:PC5    DAT0:PC3    DAT1:PC2    DAT2:PC1    DAT3:PC0
 //B组IO: CMD:PB5    CLK:PB6    DAT0:PB4    DAT1:PB8    DAT2:PB9    DAT3:PB10
 #define TCFG_SD1_PORTS						'A'
@@ -523,7 +523,7 @@ DAC硬件上的连接方式,可选的配置：
 #endif//TCFG_EQ_ENABLE
 
 #define TCFG_DRC_ENABLE						1 	  //DRC 总使能
-#define TCFG_AUDIO_MDRC_ENABLE              0     //多带drc使能  0:关闭多带drc，  1：使能多带drc  2：使能多带drc 并且 多带drc后再做一次全带的drc
+#define TCFG_AUDIO_MDRC_ENABLE              1     //多带drc使能  0:关闭多带drc，  1：使能多带drc  2：使能多带drc 并且 多带drc后再做一次全带的drc
 
 #if TCFG_DRC_ENABLE
 #define TCFG_BT_MUSIC_DRC_ENABLE            1     //支持蓝牙音乐DRC
@@ -662,7 +662,7 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 #define TCFG_AUTO_SHUT_DOWN_TIME		    (30*60)   //没有蓝牙连接自动关机时间
 #define TCFG_SYS_LVD_EN						1   //电量检测使能
-#define TCFG_POWER_ON_NEED_KEY				0	  //是否需要按按键开机配置
+#define TCFG_POWER_ON_NEED_KEY				1	  //是否需要按按键开机配置
 #define TWFG_APP_POWERON_IGNORE_DEV         0//上电忽略挂载设备，0时不忽略，非0则n毫秒忽略
 
 #define TCFG_AUDIO_DEC_OUT_TASK				0	// 解码使用单独任务做输出
@@ -751,7 +751,7 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_LINEIN_INPUT_WAY               LINEIN_INPUT_WAY
 #define TCFG_LINEIN_MULTIPLEX_WITH_SD		DISABLE 				// linein 检测与 SD cmd 复用
 #define TCFG_LINEIN_SD_PORT                 0// 0：sd0 1：sd1       //选择复用的sd口
-#define TCFG_LINEIN_DETECT_ENABLE    0
+#define TCFG_LINEIN_DETECT_ENABLE           1
 //*********************************************************************************//
 //                                  music 配置                                     //
 //*********************************************************************************//

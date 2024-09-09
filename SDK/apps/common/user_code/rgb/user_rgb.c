@@ -2688,12 +2688,6 @@ void user_rgb_deal(void)
         // r_printf("rgb spi not init ok,return\n");
         return;
     }
-#if !M_USER_RGB_FM_EN
-    if(user_rgb.fm_flag){ 
-        r_printf("open fm\n");
-        return;
-    }
-#endif
 #if USE_SUOAI_RGB_MODE
     extern u8 low_bat_change_rgb;
     if (low_bat_change_rgb)
@@ -2705,8 +2699,7 @@ void user_rgb_deal(void)
 
     if (light_off)
     {
-        
-        _this_->time=1000;
+        // _this_->time=1000;
         user_rgb_clear();
         if (light_off==1)
         {//关灯只发一次数据
@@ -2716,6 +2709,12 @@ void user_rgb_deal(void)
         light_off=2;
         return;
     } 
+#if !M_USER_RGB_FM_EN
+    if(user_rgb.fm_flag){ 
+        r_printf("open fm\n");
+        return;
+    }
+#endif
     _this_->energy=audio_dac_energy_get()*10;
     user_rgb_clear();
     

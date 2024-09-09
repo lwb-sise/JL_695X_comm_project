@@ -302,6 +302,7 @@ void app_poweron_task()
     os_time_dly(10);
     tone_play(TONE_POWER_ON_MUTE,1);
     os_time_dly(20);
+	u_pa_control(PA_UMUTE);
 #if USE_SUOAI_BAT_TONE
     if(poweron_bat_check_timer==0)
     {

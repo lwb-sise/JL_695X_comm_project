@@ -11,35 +11,109 @@
 #if TCFG_APP_BT_EN
 const u16 bt_key_ad_table[KEY_AD_NUM_MAX][KEY_EVENT_MAX] = {
     //单击             //长按          //hold         //抬起            //双击                //三击
-    [0] = {
-        KEY_CHANGE_MODE,	KEY_POWEROFF,	KEY_POWEROFF_HOLD,			KEY_NULL,		KEY_NULL,	KEY_NULL
+ [0] = {
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_POWEROFF,
+		/*hold*/KEY_POWEROFF_HOLD,
+		/*抬起*/KEY_UP_CLICK,
+#if (USE_SUOAI_COMM == 1)      
+		/*双击*/KEY_DOUBLE_CLICK,
+#else
+        /*双击*/KEY_NULL,
+#endif
+		/*按住*/KEY_NULL,\
+		/*三击*/KEY_NULL
     },
-    [1] = {
-        KEY_MUSIC_PREV,	KEY_VOL_DOWN,		KEY_VOL_DOWN,		KEY_NULL,		KEY_NULL,			KEY_NULL
+    [1] = {//3k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [2] = {
-        KEY_MUSIC_PP, KEY_CALL_HANG_UP,		KEY_NULL,	KEY_NULL,		KEY_CALL_LAST_NO,			KEY_NULL
+    [2] = {//6.2k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [3] = {
-        KEY_MUSIC_NEXT,	KEY_VOL_UP,			KEY_VOL_UP,			KEY_NULL,		KEY_NULL,			KEY_NULL
+#if (USE_SUOAI_COMM == 1) 
+    [3] = {//9k1
+		/*长按*/KEY_VOL_DOWN,\
+		/*长按*/KEY_MUSIC_PREV,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [4] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_REVERB_OPEN,	KEY_NULL
+        [4] = {//15k
+		/*单击*/KEY_VOL_UP,\
+		/*长按*/KEY_MUSIC_NEXT,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [5] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_ENC_START,		KEY_NULL
+#else
+    [3] = {//9k1
+		/*长按*/KEY_MUSIC_PREV,\
+		/*长按*/KEY_VOL_DOWN,\
+		/*按住*/KEY_VOL_DOWN,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [6] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [4] = {//15k
+		/*单击*/KEY_MUSIC_NEXT,\
+		/*长按*/KEY_VOL_UP,\
+		/*按住*/KEY_VOL_UP,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [7] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+#endif
+    [5] = {//24k
+		/*单击*/KEY_MUSIC_NEXT,\
+		/*长按*/KEY_VOL_UP,\
+		/*按住*/KEY_VOL_UP,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [8] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [6] = {//33k pp 
+        /*单击*/KEY_MUSIC_PP,\
+		/*长按*/KEY_TWS_SEARCH_REMOVE_PAIR,\
+		/*按住*/KEY_CALL_HANG_UP,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_CALL_LAST_NO,\
+		/*三击*/KEY_NULL,
     },
-    [9] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [7] = {//51k/ 68k
+        /*单击*/KEY_RGB_SW,\
+		/*长按*/KEY_RGB_ON_OFF,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL
+    },
+    [8] = {//100k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
+    },
+    [9] = {//150k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
 };
 #endif
@@ -50,35 +124,104 @@ const u16 bt_key_ad_table[KEY_AD_NUM_MAX][KEY_EVENT_MAX] = {
 #if TCFG_APP_FM_EN
 const u16 fm_key_ad_table[KEY_AD_NUM_MAX][KEY_EVENT_MAX] = {
     //单击             //长按          //hold         //抬起            //双击                //三击
-    [0] = {
-        KEY_CHANGE_MODE, KEY_POWEROFF,		KEY_POWEROFF_HOLD,	KEY_NULL,		KEY_NULL,			KEY_NULL
+   [0] = {
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_POWEROFF,
+		/*hold*/KEY_POWEROFF_HOLD,
+		/*抬起*/KEY_UP_CLICK,
+		/*双击*/KEY_NULL,
+		/*三击*/KEY_NULL
     },
-    [1] = {
-        KEY_FM_PREV_STATION, KEY_VOL_DOWN,	KEY_VOL_DOWN,	KEY_NULL,		KEY_REVERB_OPEN,		KEY_NULL
+    [1] = {//3k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [2] = {
-        KEY_MUSIC_PP,		KEY_NULL,		KEY_NULL,		KEY_NULL,		KEY_FM_SCAN_ALL_DOWN,	KEY_NULL
+    [2] = {//6.2k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [3] = {
-        KEY_FM_NEXT_STATION, KEY_VOL_UP,		KEY_VOL_UP,		KEY_NULL,		KEY_NULL,			KEY_NULL
+#if (USE_SUOAI_COMM == 1) 
+    [3] = {//9k1
+		/*长按*/KEY_VOL_DOWN,\
+		/*长按*/KEY_FM_PREV_STATION,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [4] = {
-        KEY_FM_PREV_FREQ,	KEY_FM_SCAN_UP,		KEY_NULL,		KEY_NULL,		KEY_REVERB_OPEN,	KEY_NULL
+    [4] = {//15k
+		/*长按*/KEY_VOL_UP,\
+		/*长按*/KEY_FM_NEXT_STATION,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [5] = {
-        KEY_FM_NEXT_FREQ,	KEY_FM_SCAN_DOWN,	KEY_NULL,		KEY_NULL,		KEY_ENC_START,		KEY_NULL
+#else
+    [3] = {//9k1
+		/*长按*/KEY_FM_PREV_STATION,\
+		/*长按*/KEY_VOL_DOWN,\
+		/*按住*/KEY_VOL_DOWN,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [6] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [4] = {//15k
+		/*长按*/KEY_FM_NEXT_STATION,\
+		/*长按*/KEY_VOL_UP,\
+		/*按住*/KEY_VOL_UP,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [7] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+#endif
+    [5] = {//24k
+		/*长按*/KEY_FM_NEXT_STATION,\
+		/*长按*/KEY_VOL_UP,\
+		/*按住*/KEY_VOL_UP,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [8] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [6] = {//33k
+        /*单击*/KEY_FM_SCAN_ALL_DOWN,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [9] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [7] = {//51k
+        /*单击*/KEY_RGB_SW,\
+		/*长按*/KEY_RGB_ON_OFF,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL
+    },
+    [8] = {//100k
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_NULL,
+		/*按住*/KEY_NULL,
+		/*抬起*/KEY_NULL,
+		/*三击*/KEY_NULL,
+		/*三击*/KEY_NULL
+    },
+    [9] = {//150k
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_NULL,
+		/*按住*/KEY_NULL,
+		/*抬起*/KEY_NULL,
+		/*三击*/KEY_NULL,
+		/*三击*/KEY_NULL
     },
 };
 #endif
@@ -90,34 +233,103 @@ const u16 fm_key_ad_table[KEY_AD_NUM_MAX][KEY_EVENT_MAX] = {
 const u16 linein_key_ad_table[KEY_AD_NUM_MAX][KEY_EVENT_MAX] = {
     //单击             //长按          //hold         //抬起            //双击                //三击
     [0] = {
-        KEY_CHANGE_MODE, KEY_POWEROFF,		KEY_POWEROFF_HOLD,	KEY_NULL,		KEY_NULL,			KEY_NULL
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_POWEROFF,
+		/*hold*/KEY_POWEROFF_HOLD,
+		/*抬起*/KEY_UP_CLICK,
+		/*双击*/KEY_NULL,
+		/*三击*/KEY_NULL
     },
-    [1] = {
-        KEY_NULL,			KEY_VOL_DOWN,	KEY_VOL_DOWN,	KEY_NULL,		KEY_NULL,				KEY_NULL
+    [1] = {//3k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [2] = {
-        KEY_MUSIC_PP,		KEY_NULL,		KEY_NULL,		KEY_NULL,		KEY_NULL,				KEY_NULL
+    [2] = {//6.2k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [3] = {
-        KEY_NULL,			KEY_VOL_UP,		KEY_VOL_UP,		KEY_NULL,		KEY_NULL,				KEY_NULL
+#if (USE_SUOAI_COMM == 1) 
+    [3] = {//9k1
+		/*长按*/KEY_VOL_DOWN,\
+		/*长按*/KEY_MUSIC_PREV,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [4] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_REVERB_OPEN,	KEY_NULL
+    [4] = {//15k
+		/*长按*/KEY_VOL_UP,\
+		/*长按*/KEY_MUSIC_NEXT,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [5] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_ENC_START,		KEY_NULL
+#else
+    [3] = {//9k1
+		/*长按*/KEY_MUSIC_PREV,\
+		/*长按*/KEY_VOL_DOWN,\
+		/*按住*/KEY_VOL_DOWN,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [6] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [4] = {//15k
+		/*长按*/KEY_MUSIC_NEXT,\
+		/*长按*/KEY_VOL_UP,\
+		/*按住*/KEY_VOL_UP,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [7] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+#endif
+    [5] = {//24k
+		/*长按*/KEY_MUSIC_NEXT,\
+		/*长按*/KEY_VOL_UP,\
+		/*按住*/KEY_VOL_UP,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [8] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [6] = {//33k
+        /*单击*/KEY_MUSIC_PP,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [9] = {
-        KEY_NULL,		KEY_NULL,			KEY_NULL,			KEY_NULL,		KEY_NULL,			KEY_NULL
+    [7] = {//51k
+        /*单击*/KEY_RGB_SW,\
+		/*长按*/KEY_RGB_ON_OFF,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL
+    },
+     [8] = {//100k
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_NULL,
+		/*按住*/KEY_NULL,
+		/*抬起*/KEY_NULL,
+		/*三击*/KEY_NULL,
+		/*三击*/KEY_NULL
+    },
+    [9] = {//150k
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_NULL,
+		/*按住*/KEY_NULL,
+		/*抬起*/KEY_NULL,
+		/*三击*/KEY_NULL,
+		/*三击*/KEY_NULL
     },
 };
 #endif
@@ -129,38 +341,106 @@ const u16 linein_key_ad_table[KEY_AD_NUM_MAX][KEY_EVENT_MAX] = {
 const u16 music_key_ad_table[KEY_AD_NUM_MAX][KEY_EVENT_MAX] = {
     //单击             //长按          //hold         //抬起            //双击                //三击
     [0] = {
-        KEY_CHANGE_MODE, KEY_POWEROFF,		KEY_POWEROFF_HOLD,		KEY_NULL,		KEY_MUSIC_PLAYE_REC_FOLDER_SWITCH,			KEY_NULL
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_POWEROFF,
+		/*hold*/KEY_POWEROFF_HOLD,
+		/*抬起*/KEY_UP_CLICK,
+		/*双击*/KEY_NULL,
+		/*三击*/KEY_NULL
     },
-    [1] = {
-        KEY_MUSIC_PREV,						KEY_VOL_DOWN,			KEY_VOL_DOWN,	KEY_NULL,		KEY_NULL,		KEY_NULL
+    [1] = {//3k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [2] = {
-        KEY_MUSIC_PP,						KEY_MUSIC_CHANGE_DEV,	KEY_NULL,		KEY_NULL,		KEY_MUSIC_CHANGE_REPEAT,		KEY_NULL
+    [2] = {//6.2k
+        /*单击*/KEY_NULL,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [3] = {
-        KEY_MUSIC_NEXT,						KEY_VOL_UP,				KEY_VOL_UP,		KEY_NULL,		KEY_NULL,		KEY_NULL
+#if (USE_SUOAI_COMM == 1) 
+    [3] = {//9k1
+		/*长按*/KEY_VOL_DOWN,\
+		/*长按*/KEY_MUSIC_PREV,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [4] = {
-        KEY_MUSIC_PLAYE_PREV_FOLDER,		KEY_MUSIC_FR,			KEY_MUSIC_FR,	KEY_NULL,		KEY_REVERB_OPEN,		KEY_NULL
+    [4] = {//15k
+		/*长按*/KEY_VOL_UP,\
+		/*长按*/KEY_MUSIC_NEXT,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [5] = {
-        KEY_MUSIC_PLAYE_NEXT_FOLDER,		KEY_MUSIC_FF,			KEY_MUSIC_FF,	KEY_NULL,		KEY_NULL,		KEY_NULL
+#else
+    [3] = {//9k1
+		/*长按*/KEY_MUSIC_PREV,\
+		/*长按*/KEY_VOL_DOWN,\
+		/*按住*/KEY_VOL_DOWN,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [6] = {
-        KEY_MUSIC_PLAYER_AB_REPEAT_SWITCH,	KEY_NULL,				KEY_NULL,		KEY_NULL,		KEY_NULL,		KEY_NULL
+    [4] = {//15k
+		/*长按*/KEY_MUSIC_NEXT,\
+		/*长按*/KEY_VOL_UP,\
+		/*按住*/KEY_VOL_UP,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [7] = {
-        KEY_NULL,							KEY_NULL,				KEY_NULL,		KEY_NULL,		KEY_NULL,		KEY_NULL
+#endif
+    [5] = {//24k
+		/*长按*/KEY_MUSIC_NEXT,\
+		/*长按*/KEY_VOL_UP,\
+		/*按住*/KEY_VOL_UP,\
+		/*抬起*/KEY_VOL_UP_CLICK,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [8] = {
-        KEY_NULL,							KEY_NULL,				KEY_NULL,		KEY_NULL,		KEY_NULL,		KEY_NULL
+    [6] = {//33k
+        /*单击*/KEY_MUSIC_PP,\
+		/*长按*/KEY_NULL,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL,
     },
-    [9] = {
-        KEY_NULL,							KEY_NULL,				KEY_NULL,		KEY_NULL,		KEY_NULL,		KEY_NULL
+    [7] = {//51k
+        /*单击*/KEY_RGB_SW,\
+		/*长按*/KEY_RGB_ON_OFF,\
+		/*按住*/KEY_NULL,\
+		/*抬起*/KEY_NULL,\
+		/*双击*/KEY_NULL,\
+		/*三击*/KEY_NULL
+    },
+    [8] = {//100k
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_NULL,
+		/*按住*/KEY_NULL,
+		/*抬起*/KEY_NULL,
+		/*三击*/KEY_NULL,
+		/*三击*/KEY_NULL
+    },
+    [9] = {//150k
+        /*单击*/KEY_NULL,
+		/*长按*/KEY_NULL,
+		/*按住*/KEY_NULL,
+		/*抬起*/KEY_NULL,
+		/*三击*/KEY_NULL,
+		/*三击*/KEY_NULL
     },
 };
 #endif
-
 /***********************************************************
  *				pc 模式的 adkey table
  ***********************************************************/

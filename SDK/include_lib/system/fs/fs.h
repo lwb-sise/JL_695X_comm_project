@@ -75,6 +75,9 @@ enum {
     FS_IOCTL_GET_ENCFOLDER_INFO, //获取录音文件信息
 
     FS_IOCTL_GET_OUTFLASH_ADDR, //获取外置flash实际物理地址（暂时用于手表case,特殊fat系统）
+
+    FS_IOCTL_SAVE_FAT_TABLE, //seek加速处理
+    FS_IOCTL_GET_FILE_DEEPTH, //获取文件深度
 };
 
 
@@ -162,6 +165,9 @@ struct vfscan {
     struct vfs_devinfo *dev;
     struct vfs_partition *part;
     char  filt_dir[12];
+    char  fasten_num[8];
+    char *fasten_buf;
+    char *d_save;
 };
 
 
@@ -182,7 +188,7 @@ struct vfs_operations {
     int (*fpos)(FILE *);
     int (*fcopy)(FILE *, FILE *);
     int (*fget_name)(FILE *, u8 *name, int len);
-    int (*fget_path)(FILE *, u8 *name, int len, u8 is_relative_path);
+    int (*fget_path)(FILE *, struct vfscan *, u8 *name, int len, u8 is_relative_path);
     int (*frename)(FILE *, const char *path);
     int (*fclose)(FILE *);
     int (*fdelete)(FILE *);
@@ -275,7 +281,20 @@ int fdelete_by_name(const char *fname);
 
 int fget_free_space(const char *path, u32 *space);
 
-int fget_path(FILE *file, u8 *name, int len, u8 is_relative_path);
+/* --------------------------------------------------------------------------*/
+/**
+* @brief  获取当前文件相对路径和绝对路径
+*
+* @param file 文件句柄
+* @param fscan 扫描句柄
+* @param name 路径buf
+* @param len buf长度
+* @param is_relative_path 是否相对路径
+*
+* @return  获取到的文件名长度
+*/
+/* ----------------------------------------------------------------------------*/
+int fget_path(FILE *file, struct vfscan *fscan, u8 *name, int len, u8 is_relative_path);
 
 /* arg:
  * -t  文件类型
@@ -346,9 +365,39 @@ int get_last_num(void); //录音获取最后序号。
 void set_bp_info(u32 clust, u32 fsize, u32 *flag); //扫描前设置断点参数，需要put_bp_info对应释放buf.
 void put_bp_info(void);
 
+/* --------------------------------------------------------------------------*/
+/**
+ * @brief 存储文件簇信息
+ *
+ * @param file 文件句柄
+ * @param btr  buf 长度
+ * @param buf  buf指针
+ *
+ * @note seek加速，4字节对齐
+ * @return 0成功，非0不成功
+ */
+/* ----------------------------------------------------------------------------*/
+int fsave_fat_table(FILE *file, u16 btr, u8 *buf);
+
+/* --------------------------------------------------------------------------*/
+/**
+ * @brief 设置目录项基点信息（用于加速）
+ *
+ * @param buf 存储基点buf (长度 12 * n)
+ * @param n 基点数目
+ * @note 1.加速序号选择文件，明显效果体现在上一曲加速
+ *       2.注意buf使用
+ */
+/* ----------------------------------------------------------------------------*/
+void ff_set_DirBaseInfo(void *buf, u16 n);
+
+
+int fget_deepth(FILE *file);
+
 #endif  /* VFS_ENABLE */
 
 #endif  /* __FS_H__ */
+
 
 
 

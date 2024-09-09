@@ -22,10 +22,10 @@
 #define LOG_CLI_ENABLE
 #include "debug.h"
 
-#define USE_CONFIG_STATUS_SETTING            1        //状态设置，包括灯状态和提示音
-#define USE_CONFIG_AUDIO_SETTING             1        //音频设置
+#define USE_CONFIG_STATUS_SETTING            0        //状态设置，包括灯状态和提示音
+#define USE_CONFIG_AUDIO_SETTING             0        //音频设置
 #define USE_CONFIG_MIC_TYPE_SETTING          0        //MIC类型设置
-#define USE_CONFIG_AUTO_OFF_SETTING          1        //自动关机时间设置
+#define USE_CONFIG_AUTO_OFF_SETTING          0        //自动关机时间设置
 #define USE_CONFIG_COMBINE_VOL_SETTING       1		  //联合音量读配置
 
 void lp_winsize_init(struct lp_ws_t *lp);

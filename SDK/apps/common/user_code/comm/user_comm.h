@@ -14,6 +14,7 @@
 #define USER_NO_ACTION_AUTO_OFF             1   //是否使能无操作自动关机（有别与无连接蓝牙）
 #define USER_SHOW_BAT_NOT_PHONE             0   //只显示电量，没有通话功能
 
+#define USER_CHANGE_EQ_FILE                 0   //使能外部eq文件切换
 
 //=================================== 按键开机配置 ========================================
 
@@ -92,6 +93,7 @@
 //======================================= FM =================================================
 
 #define USE_FM_LINEIN_MODE_AUTO_CHANGE      0   //是否收音模式插入linein不切入linein模式
+#define USE_DEV_OUT_TO_BT                   0   //是否使能退出外设切回蓝牙模式
 #define USE_FM_VOL_FADE_IN                  1   //是否使能FM音量渐进
 
 #if USE_FM_VOL_FADE_IN
@@ -135,6 +137,7 @@ void bat_led_scan(void);
 u8 get_bat_led_level(u16 bat_val ,u16 power_shutdown_val ,u8 old_level);
 u8 get_bat_led_level_by_bl(u8 cur_battery_level , u8 old_level);
 u8 get_bat_level_by_vbat(u16 bat);
+u8 get_bat_level_by_level(u8 level);
 
 
 //======================================= COMM ================================================

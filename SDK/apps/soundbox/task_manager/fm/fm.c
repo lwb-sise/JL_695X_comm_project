@@ -65,6 +65,10 @@ void fm_digital_Fade_in_end(void){
     printf("[FM END]+++++++++++++++++++++{%d %d } exit_fm==%d",music_volume,app_audio_get_volume(APP_AUDIO_CURRENT_STATE),exit_fm);
     if (exit_fm)
     {
+#if !M_USER_RGB_FM_EN
+    user_rgb.fm_flag = 0;
+    light_off = 0;
+#endif
         if (music_volume>=0)
         {
             app_audio_set_volume(APP_AUDIO_STATE_MUSIC, music_volume, 1);
@@ -281,6 +285,12 @@ void app_fm_task()
 #if USE_FM_VOL_FADE_IN
     exit_fm=0;
 #endif
+
+#if !M_USER_RGB_FM_EN
+    user_rgb.fm_flag = 1;
+    light_off = 1;
+#endif
+
 #if TCFG_DEC2TWS_ENABLE
     extern void set_tws_background_connected_flag(u8 flag);
     extern u8 get_tws_background_connected_flag();

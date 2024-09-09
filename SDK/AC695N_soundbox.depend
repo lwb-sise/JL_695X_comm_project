@@ -645,7 +645,7 @@
 
 1646105095 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\common\usb\usb_std_class_def.h
 
-1698321567 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\board\br23\board_ac695x_demo\board_ac695x_demo_cfg.h
+1701339306 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\board\br23\board_ac695x_demo\board_ac695x_demo_cfg.h
 	"usb_std_class_def.h"
 
 1646105095 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\board\br23\board_ac6951_kgb_v1\board_ac6951_kgb_cfg.h
@@ -720,7 +720,7 @@
 
 1646105095 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\common\usb\usb_common_def.h
 
-1646105095 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\cpu\br23\audio_config.h
+1698631659 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\cpu\br23\audio_config.h
 	"generic/typedef.h"
 	"board_config.h"
 
@@ -1279,7 +1279,7 @@
 	"le_smartbox_module.h"
 	"debug.h"
 
-1698152845 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\include\key_event_deal.h
+1698631596 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\include\key_event_deal.h
 	"typedef.h"
 	"system/event.h"
 
@@ -1861,7 +1861,7 @@
 	"asm/iic_soft.h"
 	"app_config.h"
 
-1698321143 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\common\key\adkey.c
+1698325104 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\common\key\adkey.c
 	"key_driver.h"
 	"adkey.h"
 	"gpio.h"
@@ -4632,14 +4632,14 @@
 	"app_config.h"
 	"app_task.h"
 
-1646105095 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\board\br23\board_ac695x_demo\key_table\adkey_table.c
+1700706005 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\board\br23\board_ac695x_demo\key_table\adkey_table.c
 	"key_event_deal.h"
 	"key_driver.h"
 	"app_config.h"
 	"board_config.h"
 	"app_task.h"
 
-1646105095 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\board\br23\board_ac695x_demo\key_table\iokey_table.c
+1700706027 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\board\br23\board_ac695x_demo\key_table\iokey_table.c
 	"key_event_deal.h"
 	"key_driver.h"
 	"app_config.h"
@@ -5233,7 +5233,7 @@
 	"typedef.h"
 	"JL_rcsp_protocol.h"
 
-1646105095 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\common\init.c
+1698631585 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\common\init.c
 	"app_config.h"
 	"system/includes.h"
 	"asm/charge.h"
@@ -5243,6 +5243,7 @@
 	"app_charge.h"
 	"chgbox_ctrl.h"
 	"update_loader_download.h"
+	"user_head.h"
 
 1646105095 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\common\task_table.c
 	"system/includes.h"
@@ -5255,7 +5256,7 @@
 	"audio_config.h"
 	"tone_player.h"
 
-1698142165 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\common\user_cfg_new.c
+1700706616 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\common\user_cfg_new.c
 	"app_config.h"
 	"user_cfg.h"
 	"fs.h"
@@ -5303,7 +5304,7 @@
 	"media/includes.h"
 	"audio_config.h"
 
-1646105095 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\log_config\lib_system_config.c
+1701347364 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\log_config\lib_system_config.c
 	"app_config.h"
 	"system/includes.h"
 
@@ -5362,7 +5363,7 @@
 1646105095 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\include\task_manager\bt\bt_ble.h
 	"typedef.h"
 
-1698151653 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\power_manage\app_power_manage.c
+1701336644 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\power_manage\app_power_manage.c
 	"system/includes.h"
 	"app_power_manage.h"
 	"app_main.h"
@@ -6109,7 +6110,7 @@
 	"app_power_manage.h"
 	"app_task.h"
 
-1698199750 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\app_common.c
+1700708091 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\app_common.c
 	"common/app_common.h"
 	"app_task.h"
 	"app_main.h"
@@ -6498,7 +6499,7 @@
 	"bt/vol_sync.h"
 	"tone_player.h"
 
-1698064473 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\fm\fm.c
+1700707979 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\fm\fm.c
 	"media/includes.h"
 	"system/includes.h"
 	"app_config.h"
@@ -6573,7 +6574,7 @@
 	"usb/host/usb_host.h"
 	"asm/power/p33.h"
 
-1698137099 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\linein\linein.c
+1698631610 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\linein\linein.c
 	"system/app_core.h"
 	"system/includes.h"
 	"server/server_core.h"
@@ -6707,7 +6708,7 @@
 	"system/includes.h"
 	"usb/device/msd.h"
 
-1698064039 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\power_on\power_on.c
+1698631626 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\power_on\power_on.c
 	"system/includes.h"
 	"media/includes.h"
 	"app_config.h"
@@ -7321,7 +7322,7 @@
 1646105095 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\include_lib\driver\cpu\br23\asm\iis.h
 	"generic/typedef.h"
 
-1646105095 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\cpu\br23\audio_dec\audio_dec.c
+1698631651 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\cpu\br23\audio_dec\audio_dec.c
 	"asm/includes.h"
 	"media/includes.h"
 	"system/includes.h"
@@ -7353,6 +7354,7 @@
 	"audio_common/audio_iis.h"
 	"audio_fmtx.h"
 	"audio_sbc_codec.h"
+	"user_head.h"
 	"timer.h"
 
 1646105095 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\include_lib\media\audio_equalloudness_eq.h
@@ -8362,7 +8364,7 @@
 	"user_head.h"
 	"debug/user_debug.h"
 
-1697104320 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\common\user_code\rgb\user_rgb.c
+1700707966 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\common\user_code\rgb\user_rgb.c
 	"user_head.h"
 
 1694070687 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\common\user_code\serial\u_serial.c
@@ -8420,7 +8422,7 @@
 	"asm/power_interface.h"
 	"u_wireless.h"
 
-1698056785 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\app_main.c
+1698631640 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\app_main.c
 	"system/includes.h"
 	"app_config.h"
 	"asm/pwm_led.h"
@@ -8438,6 +8440,7 @@
 	"audio.h"
 	"vm.h"
 	"user_head.h"
+	"asm/power/p33.h"
 	"debug.h"
 
 1646105095 f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\include\power_on.h
@@ -8476,7 +8479,7 @@
 	"asm/ctmu.h"
 	"uart_update.h"
 
-1698135665 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\power_off\power_off.c
+1698631618 source:f:\work_project\695n\sdk\v310\ƽ̨\ac695n_soundbox_sdk_release_3.1.0\sdk\apps\soundbox\task_manager\power_off\power_off.c
 	"common/power_off.h"
 	"bt_tws.h"
 	<stdlib.h>

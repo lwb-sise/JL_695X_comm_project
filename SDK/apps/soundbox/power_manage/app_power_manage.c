@@ -212,7 +212,9 @@ int app_power_event_handler(struct device_event *dev)
 
 u16 get_vbat_level(void)
 {
-    //return 370;     //debug
+    #ifdef CONFIG_DEBUG_ENABLE
+        return 370;     //debug
+    #endif
     return u_get_vbat(adc_get_voltage(AD_CH_VBAT) * 4 / 10);
 }
 
@@ -441,7 +443,11 @@ void vbat_check(void *priv)
     }
 #endif
     cur_battery_level = battery_value_to_phone_level(bat_val);
-
+#if BAT_LED_SHOW
+    extern u8 get_bat_led_level_by_bl(u8 cur_battery_level , u8 old_level);//LJW
+    extern u8 get_bat_level_by_vbat(u16 bat); //lwb
+    led_status = get_bat_level_by_vbat(bat_val);//get_bat_led_level_by_bl(cur_battery_level,led_status);//LJW
+#endif
     //printf("bv:%d, bl:%d , check_vbat:%d\n", bat_val, cur_battery_level, adc_check_vbat_lowpower());
 
     unit_cnt++;
@@ -594,7 +600,7 @@ void check_power_on_voltage(void)
         } else {
             normal_power_cnt++;
             low_power_cnt = 0;
-            if (normal_power_cnt > 10) {
+            if (normal_power_cnt > 50) {
                 vbat_check_init();
                 return;
             }

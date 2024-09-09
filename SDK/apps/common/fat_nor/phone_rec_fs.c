@@ -31,6 +31,7 @@
 int phone_offset_addr = 0;
 int max_rec_len = 0;
 static int sdfile_rec_index = 0;
+static u8 flash_page_mode_flag = 0;
 
 
 
@@ -42,66 +43,6 @@ static int sdfile_rec_index = 0;
 #define r_printf(...)
 #define y_printf(...)
 #endif
-
-typedef struct U16BIT_IN_PHONEFS {
-    u8 b0 : 1;
-    u8 b1 : 1;
-    u8 b2 : 1;
-    u8 b3 : 1;
-    u8 b4 : 1;
-    u8 b5 : 1;
-    u8 b6 : 1;
-    u8 b7 : 1;
-    u8 b8 : 1;
-    u8 b9 : 1;
-    u8 b10 : 1;
-    u8 b11 : 1;
-    u8 b12 : 1;
-    u8 b13 : 1;
-    u8 b14 : 1;
-    u8 b15 : 1;
-} U16BIT_IN_PHONEFS;
-
-typedef union UBIT16_IN_PHONEFS {
-    U16BIT_IN_PHONEFS bits;
-    u16 val;
-} UBIT16_IN_PHONEFS;
-
-static UBIT16_IN_PHONEFS cd_phone;
-
-static u16 do16_in_phonefs(void)
-{
-    UBIT16_IN_PHONEFS ufcc, urp;
-    u8 f_xdat;
-    u8 f_datin;
-    ufcc.bits = urp.bits = cd_phone.bits;
-    f_datin = 0x10;
-    f_xdat = f_datin ^ urp.bits.b15;
-
-    ufcc.val = urp.val << 1;
-    ufcc.bits.b12 = urp.bits.b11 ^ f_xdat;
-    ufcc.bits.b5 = urp.bits.b4 ^ f_xdat;
-    ufcc.bits.b0 = f_xdat;
-
-    urp.bits = ufcc.bits;
-    cd_phone.bits = ufcc.bits;
-    return ufcc.val & 0x00ff;
-}
-
-static void doe_in_phonefs(u16 k, void *pBuf, u32 lenIn, u32 addr)
-{
-    u8 *p = (u8 *)pBuf;
-
-    if (addr) {
-        k = (addr >> 2) ^ k;
-    }
-    cd_phone.val = k;
-    *p++ ^= k;
-    while (--lenIn) {
-        *p++ ^= do16_in_phonefs();
-    }
-}
-
 
 
 u8 phonefs_mutex_dis = 0;
@@ -671,8 +612,6 @@ u32 phone_close_recfile(REC_FILE *pfile)
 
     memset(&file_h, 0xff, sizeof(PHONE_RECFILEHEAD));
     //file_h->crc;
-    pfile->w_len = pfile->rw_p;
-
     pfile->len = pfile->w_len;
     pfile->rw_p = 0;//sizeof(PHONE_RECFILEHEAD);
     file_h.len = pfile->w_len;
@@ -792,60 +731,10 @@ u32 phone_open_recfile(u32 index, RECFILESYSTEM *pfs, REC_FILE *pfile)
     return phone_revf_index_scan(index, pfile);
 }
 
-
-u32 decode_data_by_user_key_in_sdfile(u16 key, u8 *buff, u16 size, u32 dec_addr, u8 dec_len)
-{
-    u16 key_addr;
-    u16 r_len;
-
-    while (size) {
-        r_len = (size > dec_len) ? dec_len : size;
-        key_addr = (dec_addr >> 2)^key;
-        doe_in_phonefs(key_addr, buff, r_len, 0);
-        buff += r_len;
-        dec_addr += r_len;
-        size -= r_len;
-    }
-
-    return dec_addr;
-}
-
-static u16 get_chip_id_in_phonefs()
-{
-    return boot_info.chip_id;
-}
-
 static void head_addr_get(char *name)
 {
-    extern u32 boot_info_get_sfc_base_addr(void);
-    u32 start_addr = boot_info_get_sfc_base_addr();
-    u32 offset = 0;
-    struct sdfile_file_head head = {0};
-    u16 local_flash_key = get_chip_id_in_phonefs();
-    while (1) {
-        extern int norflash_origin_read(u8 * buf, u32 offset, u32 len);
-        norflash_origin_read((u8 *)&head, start_addr, sizeof(head));
-        decode_data_by_user_key_in_sdfile(local_flash_key, (u8 *)&head, sizeof(head), offset, sizeof(head));
-        if (head.head_crc != CRC16((u8 *)&head.data_crc, sizeof(head) - sizeof(head.head_crc))) {
-            y_printf("\n >>>[test]:func = %s,line= %d\n", __FUNCTION__, __LINE__);
-            return;
-        }
-        if (0 == memcmp(head.name, name, strlen(name))) {
-            break;
-        }
-        offset += sizeof(head);
-        start_addr += sizeof(head);
-    }
-
-    {
-        extern int phone_offset_addr;
-        extern int max_rec_len;
-        phone_offset_addr = head.addr;
-        max_rec_len = head.len;
-    }
-    r_printf(">>>[test]:#########  start_addr = 0x%x, len = 0x%x\n", head.addr, head.len);
+    sdfile_head_addr_get(name, &phone_offset_addr, &max_rec_len);
 }
-
 
 
 /*----------------------------------------------------------------------------*/
@@ -874,7 +763,7 @@ int phone_max_rec_capacity = 256 * 1024;
 int set_rec_capacity(int capacity) //需要先设置容量。
 {
 
-    r_printf(">>>[test]:goto set_rec_capacity\n");
+    r_printf(">>>[test]:goto set_rec_capacity:%d\n", capacity);
     head_addr_get("REC");
 
     ASSERT(capacity <= max_rec_len, "capacity must smaller than max_rec_len!!!!!!! ");
@@ -905,6 +794,10 @@ s32 hook_sdfile_rec_write(u8 *buf, u32 addr, u32 len)
 
 void hook_sdfile_rec_erase(u32 addr)
 {
+    if (flash_page_mode_flag) {
+        norflash_erase(IOCTL_ERASE_PAGE, addr);
+        return;
+    }
     norflash_erase(IOCTL_ERASE_SECTOR, addr);
 }
 
@@ -921,8 +814,15 @@ u32 phone_init_recfs(void)
 
 u32 sdfile_rec_init(void)
 {
+    if (boot_info.vm.align == 1) {
+        flash_page_mode_flag = 1;
+    }
     phone_init_recfs();
-    phone_init_nor_fs(&phone_recfs, FS_S_SECTOR, FS_E_SECTOR, 12);
+    if (flash_page_mode_flag) {
+        phone_init_nor_fs(&phone_recfs, FS_S_SECTOR, (phone_max_rec_capacity / 256 - 1), 8);
+    } else {
+        phone_init_nor_fs(&phone_recfs, FS_S_SECTOR, FS_E_SECTOR, 12);
+    }
     phone_recfs_scan(&phone_recfs);
 #if (VFS_ENABLE == 1)
     if (mount(NULL, "mnt/rec_sdfile", "rec_sdfile", 0, NULL)) {
@@ -1260,5 +1160,6 @@ int sdfile_rec_ops_init(void)
 }
 
 #endif
+
 
 

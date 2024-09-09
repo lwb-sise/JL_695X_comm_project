@@ -600,8 +600,6 @@ void bat_led_on(u8 led)
     case 3:
         BAT_LED3_ON;
         break;
-    default:
-        break;
     }
 }
 #if 0
@@ -829,6 +827,26 @@ u8 get_bat_level_by_vbat(u16 bat){
     
 }
 
+u8 get_bat_level_by_level(u8 level){
+    printf("[%s] level ==%d",__func__,level);
+    if (level>8)//80%
+    {//4颗
+        return 15;//1111
+    }
+    else if (level>5)//50%
+    {//3颗
+        return 7 ;//0111
+    }
+    else if (level>3)//30%
+    {//2颗
+        return 3;//0011
+    }
+    else
+    {//1颗
+        return 1;//0001
+    }
+    
+}
 /*----------------------------------------------------------------------------*/
 /**@brief   LED��ʾ
    @param   led_status ��ʾ������
